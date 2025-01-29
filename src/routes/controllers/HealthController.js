@@ -1,9 +1,7 @@
 const { sequelize } = require("../../config/database");
-const {Router} = require("express");
 const { HealthCheck } = require("../../models/healthCheck");
-const HealthController = Router()
 
-HealthController.get("/", async(req, res)=>{
+async function HealthController(req,res){
     try{
         await sequelize.authenticate();
         res.removeHeader("Connection");
@@ -17,7 +15,7 @@ HealthController.get("/", async(req, res)=>{
         res.status(503).send();
         return;
     }
-})
+}
 
 module.exports = {
     HealthController : HealthController

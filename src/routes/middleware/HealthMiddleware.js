@@ -1,5 +1,6 @@
 function healthMiddleware(req, res, next){
-    if(req.method=="GET"){
+    if(req.method=="GET" || req.method == "get"){
+        // console.log(req.method)
         next();
     }
     else{
