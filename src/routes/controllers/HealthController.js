@@ -14,11 +14,6 @@ HealthController.get("/", async(req, res)=>{
         await HealthCheck.create({DateTime : new Date().toISOString()});
         res.status(200).send();
     }catch(err){
-        res.removeHeader("Connection");
-        res.removeHeader("X-Powered-By");
-        res.set("Cache-Control", "no-cache, no-store, must-revalidate;");
-        res.set("Pragma", "no-cache");
-        res.set("X-Content-Type-Options", "nosniff");
         res.status(503).send();
         return;
     }
