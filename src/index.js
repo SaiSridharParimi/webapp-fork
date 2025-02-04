@@ -23,5 +23,5 @@ app.use("*", (_, res) => {
 
 module.exports = {
     app:app,
-    server : server
+    server:server
 }
