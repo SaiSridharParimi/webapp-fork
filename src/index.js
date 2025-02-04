@@ -5,7 +5,7 @@ require("dotenv").config()
 const {sequelize} = require("./config/database");
 const { HealthRouter } = require("./routes/routes");
 
-app.listen(process.env.PORT || 8080, (()=>{
+const server = app.listen(process.env.PORT || 8080, (()=>{
     console.log("Server is listening on port "+process.env.PORT)
 }))
 
@@ -16,3 +16,12 @@ sequelize.authenticate().then(()=>{
 })
 
 app.use("/healthz", HealthRouter)
+
+app.use("*", (_, res) => {
+    res.status(400).send();
+});
+
+module.exports = {
+    app:app,
+    server : server
+}
