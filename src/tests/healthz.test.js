@@ -11,6 +11,10 @@ beforeAll(async() => {
     })
 })
 
+test("Configuring tests", ()=>{
+    expect(true).toBe(true)
+})
+
 describe("Tests for healthz API", () => {
     describe("Tests for Request Methods", () => {
         it("Testing 200 OK for GET", async () => {
@@ -75,7 +79,8 @@ describe("Tests for healthz API", () => {
     describe("Testing 503 Service Unavailable when Database Stopped", ()=>{
         it("Testing when Database stopped", async()=>{
             try{
-                execSync("sudo system stop mysql")
+                //execSync("sudo system stop mysql")
+                await sequelize.close()
                 const response = await supertest(app).get("/healthz")
                 expect(response.status).toBe(503)
                 // execSync("sudo system start mysql")
@@ -94,7 +99,5 @@ describe("Tests for healthz API", () => {
 
 afterAll(async()=>{
     await sequelize.close()
-    server.close(()=>{
-        console.log("Server closed after tests")
-    })
+    server.close()
 })
