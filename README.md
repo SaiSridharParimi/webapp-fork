@@ -22,3 +22,28 @@
     - URL : `localhost:8080/healthz`
 - Using `curl` :
     - Command : `curl -vvvv http://localhost:8080/healthz`
+
+
+## Connecting to Ubuntu Server
+- `ssh -i PathToPrivateKey Username@publicIPv4`
+
+## Copying zip file to Ubuntu Server from local
+- `ssh -i ~/.ssh/do sourceDirectory/zipFile Username@publicIPv4:PathToSaveZipFile`
+
+## Steps to run the shell script
+- Create a droplet in Digital Ocean
+- Connect to Ubuntu server and create `/opt/csye6225` folder
+- Disconnect from Ubuntu server
+- Copy the zip file from local machine to the Ubuntu server (`/opt/csye6225`)
+- Connect to remote server again
+- Write `.env` file
+- Write shell script file
+- Give executable permissions for the shell script
+- Run the shell script using `./init.sh` or `bash init.sh`
+
+## Writing tests for /healthz API (Using `supertest`)
+- Install supertest using `npm install supertest --save-dev`
+- Create a new folder `tests` in the source folder
+- Create a file called `health.test.js`
+- Write the test cases in the tests file
+- Run the test cases using `npx jest`
