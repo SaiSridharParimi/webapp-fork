@@ -34,18 +34,6 @@ log "Upgrading packages..."
 sudo apt upgrade -y
 
 log "Installing required packages..."
-SWAPFILE="/swapfile"
-if [ ! -f "$SWAPFILE" ]; then
-    log "Creating and enabling swap space..."
-    sudo fallocate -l 1G "$SWAPFILE"
-    sudo chmod 600 "$SWAPFILE"
-    sudo mkswap "$SWAPFILE"
-    sudo swapon "$SWAPFILE"
-    echo "$SWAPFILE none swap sw 0 0" | sudo tee -a /etc/fstab
-else
-    log "Swap file already exists, skipping creation."
-fi
-
 log "Installing MySQL server..."
 sudo apt install -y mysql-server
 
@@ -77,7 +65,7 @@ fi
 
 log "Creating User..."
 if id "sridhar" &>/dev/null; then
-        log "User already exists... skipping user creation"
+        log "User already exists.. skipping user creation"
 else
         sudo useradd -m -g csye6225 sridhar
 fi
@@ -85,9 +73,21 @@ fi
 log "Creating target directory..."
 sudo mkdir /opt/csye6225 || true
 
-log "Unzipping folder to target directory..."
-sudo unzip "/opt/csye6225/webapp.zip" -d "/opt/csye6225"
 
-log "Permissions to folders..."
-sudo chmod -R 764 "/opt/csye6225"
-                                                                                                                                                                                                                     
+log "Checking if ZIP file exists..."
+if [ -f "/opt/csye6225/webapp.zip" ]; then
+    log "ZIP file found. Extracting..."
+    sudo unzip -o "/opt/csye6225/webapp.zip" -d "/opt/csye6225"
+    log "Extraction completed."
+else
+    log "ZIP file not found. Skipping extraction."
+fi
+
+log "Changing ownership to directory..."
+sudo chown -R sridhar:csye6225 /opt/csye6225
+
+log "Changing permissions for folders..."
+sudo find /opt/csye6225 -type d -exec chmod 750 {} \;
+
+log "Changing permissions for files..."
+sudo find /opt/csye6225 -type f -exec chmod 640 {} \;
