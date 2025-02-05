@@ -4,6 +4,7 @@
 - Node.js
 - MySQL
 - DB and Port Details 
+- DigitalOcean
 
 ## Instructions to run the application
 - Clone the repository from webapp repository
@@ -28,7 +29,7 @@
 - `ssh -i PathToPrivateKey Username@publicIPv4`
 
 ## Copying zip file to Ubuntu Server from local
-- `ssh -i ~/.ssh/do sourceDirectory/zipFile Username@publicIPv4:PathToSaveZipFile`
+- `scp -i ~/.ssh/do sourceDirectory/zipFile Username@publicIPv4:PathToSaveZipFile`
 
 ## Steps to run the shell script
 - Create a droplet in Digital Ocean
@@ -44,6 +45,6 @@
 ## Writing tests for /healthz API (Using `supertest`)
 - Install supertest using `npm install supertest --save-dev`
 - Create a new folder `tests` in the source folder
-- Create a file called `health.test.js`
+- Create a file called `healthz.test.js`
 - Write the test cases in the tests file
 - Run the test cases using `npx jest`
