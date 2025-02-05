@@ -11,6 +11,7 @@ log(){
 }
 
 ENV_FILE="/opt/csye6225/.env"
+
 log  "Loading .env file..."
 if [ -f $ENV_FILE ]; then
     log ".env file was found"
@@ -47,8 +48,10 @@ fi
 
 log "Installing MySQL server..."
 sudo apt install -y mysql-server
+
 log "Installing unzip..."
 sudo apt install -y unzip
+
 log "Installing npm..."
 sudo apt install -y npm
 
@@ -58,7 +61,6 @@ sudo systemctl restart mysql
 log "Enabling MySQL..."
 sudo systemctl enable mysql
 
-
 log "Configuring Database..."
 sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD';"
 sudo mysql -e "FLUSH PRIVILEGES;"
@@ -66,8 +68,7 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 log "Creating Database..."
 sudo mysql -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME;"
 
-
-log "Creating Group"
+log "Creating Group..."
 if [ $(getent group csye6225) ]; then
         log "Group already exists.. skipping group creation"
 else
@@ -76,7 +77,9 @@ fi
 
 log "Creating User..."
 if id "sridhar" &>/dev/null; then
-        log "User already exists.. skipping user creation"
+        log "User already exists... skipping user creation"
+else
+        sudo useradd -m -g csye6225 sridhar
 fi
 
 log "Creating target directory..."
