@@ -60,20 +60,26 @@ describe("Tests for healthz API", () => {
             })
             test("Testing 400 for HTML in body", async()=>{
                 const response = await supertest(app).get("/healthz").set('Content-Type', 'text/html')
-                                                                     .send("<html>Hello</html>")
+                                                                     .send("<html>Using HTML</html>")
                 expect(response.status).toBe(400)
             })
             it("Testing 400 for form data", async()=>{
                 const response = await supertest(app).get("/healthz").set('Content-Type', 'application/x-www-form-urlencoded')
-                                                                     .send("Key and Value Pair")
+                                                                     .send("Using Form Data")
                 expect(response.status).toBe(400)                                                
             })
         })
         describe("Testing 400 Bad Request for Request Param", ()=>{
             it("Testing for request param", async()=>{
-                const response = await supertest(app).get("/healthz?a=10")
+                const response = await supertest(app).get("/healthz?testingValue=asdf")
                 expect(response.status).toBe(400) 
             })
+        })
+        describe("Testing /healthz with headers", () => {
+            it("should return 400 Bad Request if headers are present", async () => {
+                const response = await supertest(app).get("/healthz").set("key", "value");
+                expect(response.status).toBe(400);
+            });
         })
     })
     describe("Testing 503 Service Unavailable when Database Stopped", ()=>{
