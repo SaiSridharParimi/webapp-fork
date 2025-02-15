@@ -17,6 +17,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Configure MySQL
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade -y
+          sudo systemctl start mysql
+          sudo systemctl status mysql
+        
       - name: Set up environment variables
         run: |
           echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
@@ -27,12 +34,9 @@ jobs:
           echo "DIALECT=${{ secrets.DIALECT }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
 
-      - name: Configure MySQL
+      - name: Configuring Database
         run: |
-          sudo apt-get update
-          sudo apt-get upgrade -y
-          sudo systemctl start mysql
-          sudo systemctl status mysql
+          mysql -u root -p"${{ secrets.DATABASE_PASSWORD }}" -e "CREATE DATABASE ${{ secrets.DATABASE_NAME }};"
 
       - name: Install Dependencies
         run: |
