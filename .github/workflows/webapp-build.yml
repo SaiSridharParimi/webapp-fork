@@ -17,6 +17,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set up environment variables
+        run: |
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
+          echo "DIALECT=${{ secrets.DIALECT }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+
       - name: Configure MySQL
         run: |
           sudo apt-get update
