@@ -36,7 +36,9 @@ jobs:
 
       - name: Configuring Database
         run: |
-          mysql -u root -p"${{ secrets.DATABASE_PASSWORD }}" -e "CREATE DATABASE ${{ secrets.DATABASE_NAME }};"
+          sudo mysql -e "ALTER USER ${{ secrets.DATABASE_USERNAME }}@${{ secrets.DATABASE_HOST }} IDENTIFIED BY ${{ secrets.DATABASE_PASSWORD }};"
+          sudo mysql -e "FLUSH PRIVILEGES;"
+          sudo mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
 
       - name: Install Dependencies
         run: |
