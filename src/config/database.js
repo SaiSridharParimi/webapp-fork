@@ -18,7 +18,7 @@ mysql.createConnection({
 const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USERNAME, process.env.DATABASE_PASSWORD, {
     host : process.env.HOST,
     port : process.env.DATABASE_PORT,
-    dialect : process.env.DIALECT,
+    dialect : process.env.DIALECT || 'mysql',
     logging : false,
     pool :{
         max : 10,
