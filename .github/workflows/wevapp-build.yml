@@ -20,6 +20,4 @@ jobs:
           npm install
       
       - name: Run Tests
-        run: |
-          cd src
-          npx jest 
+        run: npx jest 
