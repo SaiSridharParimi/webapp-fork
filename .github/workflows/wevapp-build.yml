@@ -22,4 +22,4 @@ jobs:
       - name: Run Tests
         run: |
           cd src
-          npx jest
+          npx jest 
