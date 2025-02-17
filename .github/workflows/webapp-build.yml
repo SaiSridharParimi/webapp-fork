@@ -39,6 +39,13 @@ jobs:
           echo "DIALECT=$DIALECT" >> .env
           echo "PORT=$PORT" >> .env
 
+      - name: Debug Secrets
+        run: |
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}"
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}"
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}"
+          echo "DIALECT=${{ secrets.DIALECT }}"
+          echo "PORT=${{ secrets.PORT }}"
 
       - name: Configuring Database
         run: |
