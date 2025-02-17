@@ -1,7 +1,7 @@
 name: WebApp-Workflow
 
 on:
-  pull_request: 
+  pull_request:
     branches:
       - main
 
@@ -9,32 +9,35 @@ jobs:
   build:
     name: WebApp Setup
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0  # Or your preferred version
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }} # Only for setup
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
+          MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Configure MySQL
-        services: 
-          mysql:
-          image: mysql:8.0
-          env:
-            MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-            MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
-            MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
-            MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          ports:
-            - 3306:3306
-        
       - name: Set up environment variables
         env:
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_HOST: localhost  # This is CRUCIAL - ALWAYS localhost with services
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          DATABASE_PORT: 3306  # The mapped port
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DIALECT: ${{ secrets.DIALECT }}
-          PORT: ${{ secrets.PORT }}
+          DIALECT: ${{ secrets.DIALECT }} # If needed
+          PORT: ${{ secrets.PORT }} # If needed
         run: |
           echo "DATABASE_HOST=$DATABASE_HOST" >> .env
           echo "DATABASE_NAME=$DATABASE_NAME" >> .env
@@ -45,20 +48,18 @@ jobs:
           echo "PORT=$PORT" >> .env
           cat .env
 
-      - name: Debug environment variables
-        run: env | grep -E "^(DATABASE_|MYSQL_)
-
-      - name: Configuring Database
+      - name: Grant Privileges (Corrected)
         run: |
-          sudo mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
-          sudo mysql -e "ALTER USER ${{ secrets.DATABASE_USERNAME }}@${{ secrets.DATABASE_HOST }} IDENTIFIED BY ${{ secrets.DATABASE_PASSWORD }};"
-          sudo mysql -e "FLUSH PRIVILEGES;"
+          mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} -h localhost -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';"
+          mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} -h localhost -e "FLUSH PRIVILEGES;"
+
+      - name: Debug environment variables
+        run: env | grep -E "^(DATABASE_|MYSQL_)"
 
       - name: Install Dependencies
-        run: |
-          cd src
-          npm install
-      
+        working-directory: src
+        run: npm install
+
       - name: Run Tests
         working-directory: src
         run: npx jest
