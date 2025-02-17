@@ -20,6 +20,7 @@ jobs:
           sudo apt-get upgrade -y
           sudo systemctl start mysql
           sudo systemctl status mysql
+          sudo systemctl enable mysql
         
       - name: Set up environment variables
         env:
@@ -38,14 +39,7 @@ jobs:
           echo "DATABASE_USERNAME=$DATABASE_USERNAME" >> .env
           echo "DIALECT=$DIALECT" >> .env
           echo "PORT=$PORT" >> .env
-
-      - name: Debug Secrets
-        run: |
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}"
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}"
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}"
-          echo "DIALECT=${{ secrets.DIALECT }}"
-          echo "PORT=${{ secrets.PORT }}"
+          cat .env
 
       - name: Configuring Database
         run: |
