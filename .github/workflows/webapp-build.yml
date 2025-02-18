@@ -40,17 +40,12 @@ jobs:
           echo "DIALECT=$DIALECT" >> .env
           echo "PORT=$PORT" >> .env
           cat .env
-      
-      - name: Grant Privileges (Corrected and Secure)
-        run: |
-          sudo mysql -u root  -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'localhost' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';"
-          sudo mysql -u root  -e "FLUSH PRIVILEGES;"
 
       - name: Configuring Database
         run: |
-          sudo mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
-          sudo mysql -e "ALTER USER ${{ secrets.DATABASE_USERNAME }}@${{ secrets.DATABASE_HOST }} IDENTIFIED BY ${{ secrets.DATABASE_PASSWORD }};"
-          sudo mysql -e "FLUSH PRIVILEGES;"
+          sudo -u root mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
+          sudo -u root mysql -e "ALTER USER ${{ secrets.DATABASE_USERNAME }}@${{ secrets.DATABASE_HOST }} IDENTIFIED BY ${{ secrets.DATABASE_PASSWORD }};"
+          sudo -u root mysql -e "FLUSH PRIVILEGES;"
 
       - name: Install Dependencies
         run: |
