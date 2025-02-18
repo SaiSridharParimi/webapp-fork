@@ -19,7 +19,6 @@ jobs:
           MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }}" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout Code
