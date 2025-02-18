@@ -10,22 +10,22 @@ jobs:
     name: Webapp Setup
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{DATABASE_PASSWORD}}
+          MYSQL_DATABASE: ${{DATABASE_NAME}}
+          MYSQL_USER: ${{DATABASE_USERNAME}}
+        ports:
+          - 3306:3306
+    
     steps:
-      - name: Updating Packgaes
-        run: sudo apt update -y
+      - name: Checkout Code
+        uses: actions/checkout@v2
       
-      - name: Upgrading Packages
-        run: sudo apt upgrade -y
-
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Setting up MySQL
+        run: sudo apt install mysql-client -y
       
-      - name: Installing MySQL
-        run: sudo apt install mysql-server
-
-      - name: Starting MySQL
-        run: sudo systemctl start mysql
-      
-      - name: Configuring DB
-        run: sudo mysql -u root EOF<<
-            UPDATE mysql.user SET Password=PASSWORD("${{secrets.DATABASE_PASSWORD}}") WHERE User="root";
+      - name: Status of MySQL
+        run: sudo systemctl status mysql
