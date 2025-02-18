@@ -1,62 +1,64 @@
-name: WebApp-Workflow
+name: Webapp-Workflow
 
 on:
   pull_request:
     branches:
       - main
-    types: [opened, reopened]
-  push:
-    branches:
-      - feature/ci-changes
-    
+
 jobs:
   build:
     name: WebApp Setup
     runs-on: ubuntu-latest
 
-    services: #extra services
+    services:
       mysql:
-        image: mysql:8.0 #MySQL Container
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
-          MYSQL_ROOT_HOST: '%' 
+          MYSQL_ROOT_HOST: '%'
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
-      
+
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
-      
+
       - name: Set up environment variables
         working-directory: src
         run: |
-          echo "DATABASE_HOST=${{secrets.DATABASE_HOST}}" >> .env
-          echo "DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}}" >> .env
-          echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
-          echo "DATABASE_NAME=${{secrets.DATABASE_NAME}}" >> .env
-          echo "DATABASE_PORT=${{secrets.DATABASE_PORT}}" >> .env
-          echo "DIALECT=${{secrets.DIALECT}}" >> .env
-          echo "PORT=${{secrets.PORT}}" >> .env
+          echo "DATABASE_HOST=127.0.0.1" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_PORT=3306" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
+          echo "DIALECT=${{ secrets.DIALECT }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          cat .env
 
       - name: Checking environment variables
         working-directory: src
         run: cat .env
-      
-      - name: Installing Node.js
+
+      - name: Configure Database
+        run: |
+          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
+          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'%'; FLUSH PRIVILEGES;"
+
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
-      
+          node-version: '18'
+
       - name: Install Dependencies
         working-directory: src
         run: npm install
-      
+
       - name: Run Tests
         working-directory: src
         run: npx jest
