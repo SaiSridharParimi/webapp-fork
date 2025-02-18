@@ -46,7 +46,7 @@ jobs:
 
       - name: Configuring Database
         run: |
-          mysql -u root <<EOF
+          mysql -u root -p ${{ secrets.DATABASE_PASSWORD }}<<EOF
           CREATE DATABASE CSYE6225 IF NOT EXISTS;
           EOF
 
