@@ -27,4 +27,5 @@ jobs:
         run: sudo systemctl start mysql
       
       - name: Configuring DB
-        run: sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ${{secrets.DATABASE_PASSWORD}};"
+        run: sudo mysql -u root EOF<<
+            UPDATE mysql.user SET Password=PASSWORD("${{secrets.DATABASE_PASSWORD}}") WHERE User="root";
