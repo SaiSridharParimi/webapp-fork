@@ -41,8 +41,6 @@ jobs:
           echo "PORT=$PORT" >> .env
           cat .env
 
-      - name: Debug environment variables
-        run: env | grep -E "^(DATABASE_|MYSQL_)
 
       - name: Configuring Database
         run: |
