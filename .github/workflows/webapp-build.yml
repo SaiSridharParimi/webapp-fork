@@ -21,7 +21,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mysql-server mysql-client
           sudo service mysql start
-          sudo mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_DATABASE }};"
+          sudo mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_DATABASE }};"
       
       # Wait for MySQL to be ready (the `mysql` service on the VM)
       - name: Wait for MySQL to be ready
