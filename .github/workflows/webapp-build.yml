@@ -1,72 +1,30 @@
-name: WebApp-Workflow
+name: Webapp-Workflow
 
 on:
-  pull_request: 
-    branches:
-      - main
+  pull_request:
+    - main
 
 jobs:
   build:
-    name: WebApp Setup
+    name: Webapp Setup
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
-          MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }}"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up environment variables
-        env:
-          DATABASE_HOST: 127.0.0.1  # MySQL service runs on localhost
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_PORT: 3306
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DIALECT: ${{ secrets.DIALECT }}
-          PORT: ${{ secrets.PORT }}
-        run: |
-          echo "DATABASE_HOST=$DATABASE_HOST" >> .env
-          echo "DATABASE_NAME=$DATABASE_NAME" >> .env
-          echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >> .env
-          echo "DATABASE_PORT=$DATABASE_PORT" >> .env
-          echo "DATABASE_USERNAME=$DATABASE_USERNAME" >> .env
-          echo "DIALECT=$DIALECT" >> .env
-          echo "PORT=$PORT" >> .env
-          cat .env
-
-      - name: Wait for MySQL to be Ready
-        run: |
-          until mysqladmin ping -h 127.0.0.1 --port=3306 --user=${{ secrets.DATABASE_USERNAME }} --password="${{ secrets.DATABASE_PASSWORD }}" --silent; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
-          echo "MySQL is ready!"
-
-      - name: Configuring Database
-        run: |
-          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
-          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'%'; FLUSH PRIVILEGES;"
-
-      - name: Install Dependencies
-        run: |
-          cd src
-          npm install
+      - name: Updating Packgaes
+        runs: sudo apt update -y
       
-      - name: Run Tests
-        working-directory: src
-        run: npx jest
+      - name: Upgrading Packages
+        runs: sudo apt upgrade -y
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Installing MySQL
+        runs: sudo apt install mysql-server
+
+      - name: Starting MySQL
+        runs: sudo systemctl start mysql
+      
+      - name: Configuring DB
+        runs: sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ${{secrets.DATABASE_PASSWORD}};"
+        
