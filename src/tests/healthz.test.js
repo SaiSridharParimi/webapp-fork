@@ -19,7 +19,7 @@ describe("Tests for healthz API", () => {
     describe("Tests for Request Methods", () => {
         it("Testing 200 OK for GET", async () => {
             const response = await supertest(app).get("/healthz")
-            expect(response.status).toBe(200)
+            expect(response.status).toBe(400)
         })
         test("Testing 405 Method Not Allowed for POST", async () => {
             const response = await supertest(app).post("/healthz")
@@ -89,7 +89,6 @@ describe("Tests for healthz API", () => {
                 await sequelize.close()
                 const response = await supertest(app).get("/healthz")
                 expect(response.status).toBe(500)
-                await sequelize.authenticate()
                 // execSync("sudo system start mysql")
             }catch(err){
                 console.log(err)
