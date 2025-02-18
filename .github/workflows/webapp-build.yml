@@ -26,6 +26,7 @@ jobs:
       
       - name: Setting up MySQL
         run: sudo apt install mysql-client -y
-      
-      - name: Status of MySQL
-        run: sudo systemctl status mysql
+
+      - name: Creating DB 
+        run: sudo mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS CSYE6225"
+        
