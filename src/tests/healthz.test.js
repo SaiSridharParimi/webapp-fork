@@ -2,6 +2,7 @@ const supertest = require("supertest")
 const { app, server } = require("../index")
 const { sequelize } = require("../config/database")
 const {execSync} = require("child_process")
+const {healthCheck} = require("../models/healthCheck")
 
 beforeAll(async() => {
     await sequelize.authenticate().then(() => {
@@ -9,6 +10,7 @@ beforeAll(async() => {
     }).catch((err) => {
         console.log("Unable to create DB during tests" + err)
     })
+    await healthCheck.sync()
 })
 
 test("Configuring tests", ()=>{
