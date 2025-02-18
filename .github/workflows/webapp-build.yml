@@ -25,33 +25,33 @@ jobs:
           --health-retries=3
       
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Set up environment variables
-      working-directory: src
-      run: |
-        echo "DATABASE_HOST=${{secrets.DATABASE_HOST}}" >> .env
-        echo "DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}}" >> .env
-        echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
-        echo "DATABASE_NAME=${{secrets.DATABASE_NAME}}" >> .env
-        echo "DATABASE_PORT=${{secrets.DATABASE_PORT}}" >> .env
-        echo "DIALECT=${{secrets.DIALECT}}" >> .env
-        echo "PORT=${{PORT}}" >> .env
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up environment variables
+        working-directory: src
+        run: |
+          echo "DATABASE_HOST=${{secrets.DATABASE_HOST}}" >> .env
+          echo "DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}}" >> .env
+          echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
+          echo "DATABASE_NAME=${{secrets.DATABASE_NAME}}" >> .env
+          echo "DATABASE_PORT=${{secrets.DATABASE_PORT}}" >> .env
+          echo "DIALECT=${{secrets.DIALECT}}" >> .env
+          echo "PORT=${{PORT}}" >> .env
 
-    - name: Checking environment variables
-      working-directory: src
-      run: cat .env
-    
-    - name: Installing Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.x'
-    
-    - name: Install Dependencies
-      working-directory: src
-      run: npm install
-    
-    - name: Run Tests
-      working-directory: src
-      run: npx jest
+      - name: Checking environment variables
+        working-directory: src
+        run: cat .env
+      
+      - name: Installing Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      
+      - name: Install Dependencies
+        working-directory: src
+        run: npm install
+      
+      - name: Run Tests
+        working-directory: src
+        run: npx jest
