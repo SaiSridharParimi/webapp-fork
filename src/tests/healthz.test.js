@@ -84,16 +84,9 @@ describe("Tests for healthz API", () => {
     })
     describe("Testing 503 Service Unavailable when Database Stopped", ()=>{
         it("Testing when Database stopped", async()=>{
-            try{
-                //execSync("sudo system stop mysql")
-                await sequelize.close()
-                const response = await supertest(app).get("/healthz")
-                expect(response.status).toBe(503)
-                await sequelize.authenticate()
-                // execSync("sudo system start mysql")
-            }catch(err){
-                console.log(err)
-            }
+            await sequelize.close()
+            const response = await supertest(app).get("/healthz")
+            expect(response.status).toBe(503)
         })
     })
     describe("No Method Returns 500", (()=>{
