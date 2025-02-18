@@ -49,16 +49,17 @@ jobs:
 
       - name: Setup MySQL Database and User
         run: |
-          mysql -h127.0.0.1 -uroot -p"${{ secrets.DATABASE_PASSWORD }}" <<EOF
+          mysql -hlocalhost -uroot -p"${{ secrets.DATABASE_PASSWORD }}" <<EOF
           CREATE DATABASE IF NOT EXISTS \`${{ secrets.DATABASE_NAME }}\`;
           CREATE USER IF NOT EXISTS '${{ secrets.DATABASE_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON \`${{ secrets.DATABASE_NAME }}\`.* TO '${{ secrets.DATABASE_USERNAME }}'@'localhost' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';
           GRANT ALL PRIVILEGES ON \`${{ secrets.DATABASE_NAME }}\`.* TO '${{ secrets.DATABASE_USERNAME }}'@'%';
           FLUSH PRIVILEGES;
           EOF
 
       - name: Run Tests
         env:
-          DB_HOST: 127.0.0.1
+          DB_HOST: localhost
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
