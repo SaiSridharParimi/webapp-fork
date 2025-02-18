@@ -86,13 +86,13 @@ describe("Tests for healthz API", () => {
         it("Testing when Database stopped", async()=>{
             await sequelize.close()
             const response = await supertest(app).get("/healthz")
-            expect(response.status).toBe(500)
+            expect(response.status).toBe(503)
         })
     })
     describe("No Method Returns 500", (()=>{
         test("Ensuring no request returns 500", async () => {
             const response = await supertest(app).get("/healthz");
-            expect(response.status).not.toBe(503);
+            expect(response.status).not.toBe(500);
         });
     }))
 })
