@@ -19,25 +19,25 @@ jobs:
           MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
         ports:
           - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      
-      - name: Install MySQL Client
+
+      - name: Setting up MySQL client
         run: sudo apt-get install mysql-client -y
 
+      # Wait for MySQL to be ready
       - name: Wait for MySQL to be ready
         run: |
-          for i in {1..10}; do
-            if mysqladmin ping -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} --silent; then
-              echo "MySQL is ready!"
-              break
-            else
-              echo "Waiting for MySQL to be ready..."
-              sleep 5
-            fi
+          until mysql -h mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW DATABASES;"; do
+            echo "Waiting for MySQL..."
+            sleep 5
           done
+          echo "MySQL is ready!"
 
-      - name: Create Database
-        run: mysql -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
+      # Create the database if it doesn't exist
+      - name: Creating Database
+        run: |
+          mysql -h mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS CSYE6225;"
