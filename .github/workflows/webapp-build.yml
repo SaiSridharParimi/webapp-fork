@@ -18,7 +18,7 @@ jobs:
           MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
           MYSQL_ROOT_HOST: '%'
         ports:
-          - ${{ secrets.DATABASE_PORT }}:3306
+          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
