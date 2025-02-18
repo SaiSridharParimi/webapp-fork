@@ -14,25 +14,31 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          MYSQL_DATABASE: ${{secrets.DATABASE_NAME}}
-          MYSQL_USER: ${{secrets.DATABASE_USERNAME}}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
+          MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
         ports:
           - 3306:3306
-    
+        options: --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }}" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
       
-      - name: Setting up MySQL
-        run: sudo apt install mysql-client -y
+      - name: Install MySQL Client
+        run: sudo apt-get install mysql-client -y
 
-      - name: Connecting to MySQL
-        run: | 
-          until mysql -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW DATABASES;"; do
-            echo "Waiting for connection..."
-            sleep 5
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..10}; do
+            if mysqladmin ping -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} --silent; then
+              echo "MySQL is ready!"
+              break
+            else
+              echo "Waiting for MySQL to be ready..."
+              sleep 5
+            fi
           done
 
-      - name: Creating DB 
-        run: sudo mysql -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS CSYE6225"
+      - name: Create Database
+        run: mysql -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
