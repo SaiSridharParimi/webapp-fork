@@ -28,5 +28,4 @@ jobs:
         run: sudo apt install mysql-client -y
 
       - name: Creating DB 
-        run: sudo mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS CSYE6225"
-        
+        run: sudo mysql -h 127.0.0.1 -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS CSYE6225"
