@@ -2,8 +2,9 @@ name: Webapp-Workflow
 
 on:
   pull_request:
-    - main
-
+    branches:
+      - main
+    
 jobs:
   build:
     name: Webapp Setup
@@ -27,4 +28,3 @@ jobs:
       
       - name: Configuring DB
         runs: sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ${{secrets.DATABASE_PASSWORD}};"
-        
