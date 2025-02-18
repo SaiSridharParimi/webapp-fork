@@ -32,7 +32,9 @@ jobs:
           node-version: '16'
 
       - name: Install Node.js Dependencies
-        run: npm install
+        run: |
+          cd src
+          npm install
 
       - name: Wait for MySQL
         run: |
@@ -65,4 +67,6 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
-        run: npm test
+        run: |
+          cd src
+          npm test
