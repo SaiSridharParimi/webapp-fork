@@ -84,9 +84,11 @@ describe("Tests for healthz API", () => {
     })
     describe("Testing 503 Service Unavailable when Database Stopped", ()=>{
         it("Testing when Database stopped", async()=>{
-            try{
-                execSync("sudo system stop mysql")
+            beforeAll(async()=>{
                 await sequelize.close()
+            })
+            try{
+                // execSync("sudo system stop mysql")
                 const response = await supertest(app).get("/healthz")
                 expect(response.status).toBe(400)
                 // execSync("sudo system start mysql")
