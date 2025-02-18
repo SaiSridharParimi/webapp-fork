@@ -46,9 +46,8 @@ jobs:
 
       - name: Configuring Database
         run: |
-          mysql -u root -p"${{ secrets.DATABASE_PASSWORD }}"<<EOF
-          CREATE DATABASE CSYE6225 IF NOT EXISTS;
-          EOF
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';"
+          sudo mysql -e "FLUSH PRIVILEGES;"
 
       - name: Install Dependencies
         run: |
