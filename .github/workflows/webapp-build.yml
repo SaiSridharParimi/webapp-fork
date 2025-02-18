@@ -41,6 +41,9 @@ jobs:
           echo "PORT=$PORT" >> .env
           cat .env
 
+      - name: SQL Ready 
+        run: mysqladmin ping -h 127.0.0.1 --port 3306 --user=root --password="${{ secrets.DATABASE_PASSWORD }}" --silent
+
       - name: Configuring Database
         run: |
           sudo mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME};"
