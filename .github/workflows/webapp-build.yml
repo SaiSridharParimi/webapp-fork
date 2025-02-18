@@ -42,7 +42,7 @@ jobs:
           echo "DATABASE_NAME=${{secrets.DATABASE_NAME}}" >> .env
           echo "DATABASE_PORT=${{secrets.DATABASE_PORT}}" >> .env
           echo "DIALECT=${{secrets.DIALECT}}" >> .env
-          echo "PORT=${{PORT}}" >> .env
+          echo "PORT=${{secrets.PORT}}" >> .env
 
       - name: Checking environment variables
         working-directory: src
