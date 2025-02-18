@@ -1,4 +1,4 @@
-name: Webapp-Workflow
+name: WebApp-Workflow
 
 on:
   pull_request:
@@ -10,9 +10,9 @@ jobs:
     name: WebApp Setup
     runs-on: ubuntu-latest
 
-    services:
+    services: #Extra Services
       mysql:
-        image: mysql:8.0
+        image: mysql:8.0  #MySQL Container
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
@@ -32,7 +32,7 @@ jobs:
       - name: Set up environment variables
         working-directory: src
         run: |
-          echo "DATABASE_HOST=127.0.0.1" >> .env
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
           echo "DATABASE_PORT=3306" >> .env
