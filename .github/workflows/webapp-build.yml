@@ -65,11 +65,11 @@ jobs:
       - name: Run Tests
         working-directory: src
         env:
-          DB_HOST: "127.0.0.1"
-          DB_NAME: ${{ secrets.DATABASE_NAME }}
-          DB_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DB_PORT: "3306"
-          DB_USER: "root"
-          DB_DIALECT: "mysql"
+          DATABASE_HOST: "127.0.0.1"
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_PORT: "3306"
+          DATABASE_USERNAME: "root"
+          DIALECT: "mysql"
           PORT: ${{ secrets.PORT }}
         run: npx jest
