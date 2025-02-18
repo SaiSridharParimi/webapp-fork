@@ -90,7 +90,7 @@ describe("Tests for healthz API", () => {
             try{
                 // execSync("sudo system stop mysql")
                 const response = await supertest(app).get("/healthz")
-                expect(response.status).toBe(400)
+                expect(response.status).toBe(503)
                 // execSync("sudo system start mysql")
             }catch(err){
                 console.log(err)
