@@ -12,8 +12,8 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -52,10 +52,10 @@ jobs:
 
       - name: Setup MySQL Database and User
         run: |
-          mysql -h127.0.0.1 -uroot -p"${{ secrets.DB_PASSWORD }}" <<EOF
-          CREATE DATABASE IF NOT EXISTS \`${{ secrets.DB_NAME }}\`;
-          CREATE USER IF NOT EXISTS '${{ secrets.DB_USER }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';
-          GRANT ALL PRIVILEGES ON \`${{ secrets.DB_NAME }}\`.* TO '${{ secrets.DB_USER }}'@'%';
+          mysql -h127.0.0.1 -uroot -p"${{ secrets.DATABASE_PASSWORD }}" <<EOF
+          CREATE DATABASE IF NOT EXISTS \`${{ secrets.DATABASE_NAME }}\`;
+          CREATE USER IF NOT EXISTS '${{ secrets.DATABASE_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';
+          GRANT ALL PRIVILEGES ON \`${{ secrets.DATABASE_NAME }}\`.* TO '${{ secrets.DATABASE_USERNAME }}'@'%';
           FLUSH PRIVILEGES;
           EOF
 
