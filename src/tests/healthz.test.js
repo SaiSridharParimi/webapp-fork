@@ -88,7 +88,7 @@ describe("Tests for healthz API", () => {
                 //execSync("sudo system stop mysql")
                 await sequelize.close()
                 const response = await supertest(app).get("/healthz")
-                expect(response.status).toBe(503)
+                expect(response.status).toBe(500)
                 await sequelize.authenticate()
                 // execSync("sudo system start mysql")
             }catch(err){
