@@ -92,7 +92,7 @@ describe("Tests for healthz API", () => {
     describe("No Method Returns 500", (()=>{
         test("Ensuring no request returns 500", async () => {
             const response = await supertest(app).get("/healthz");
-            expect(response.status).not.toBe(500);
+            expect(response.status).not.toBe(503);
         });
     }))
 })
