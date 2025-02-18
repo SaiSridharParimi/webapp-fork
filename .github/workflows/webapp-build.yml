@@ -43,8 +43,8 @@ jobs:
       
       - name: Grant Privileges (Corrected and Secure)
         run: |
-          mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} -h localhost -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'localhost' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';"
-          mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} -h localhost -e "FLUSH PRIVILEGES;"
+          mysql -u root  -h localhost -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'localhost' IDENTIFIED BY '${{ secrets.DATABASE_PASSWORD }}';"
+          mysql -u root  -h localhost -e "FLUSH PRIVILEGES;"
 
       - name: Configuring Database
         run: |
