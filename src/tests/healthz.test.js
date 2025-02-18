@@ -19,7 +19,7 @@ describe("Tests for healthz API", () => {
     describe("Tests for Request Methods", () => {
         it("Testing 200 OK for GET", async () => {
             const response = await supertest(app).get("/healthz")
-            expect(response.status).toBe(400)
+            expect(response.status).toBe(200)
         })
         test("Testing 405 Method Not Allowed for POST", async () => {
             const response = await supertest(app).post("/healthz")
@@ -85,7 +85,7 @@ describe("Tests for healthz API", () => {
     describe("Testing 503 Service Unavailable when Database Stopped", ()=>{
         it("Testing when Database stopped", async()=>{
             try{
-                //execSync("sudo system stop mysql")
+                execSync("sudo system stop mysql")
                 await sequelize.close()
                 const response = await supertest(app).get("/healthz")
                 expect(response.status).toBe(400)
