@@ -18,11 +18,11 @@ jobs:
       mysql:
         image: mysql:8.0 #MySQL Container
         env:
-          MYSQL_ROOT_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          MYSQL_DATABASE: ${{secrets.DATABASE_NAME}}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
           MYSQL_ROOT_HOST: '%' 
         ports:
-          - 3306:3306
+          - ${{ secrets.DATABASE_PORT }}:3306
         options: >-
           --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -p${{ secrets.DATABASE_PASSWORD }}"
           --health-interval=10s
