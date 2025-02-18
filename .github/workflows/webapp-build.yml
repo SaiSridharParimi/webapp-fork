@@ -12,19 +12,19 @@ jobs:
 
     steps:
       - name: Updating Packgaes
-        runs: sudo apt update -y
+        run: sudo apt update -y
       
       - name: Upgrading Packages
-        runs: sudo apt upgrade -y
+        run: sudo apt upgrade -y
 
       - name: Checkout code
         uses: actions/checkout@v3
       
       - name: Installing MySQL
-        runs: sudo apt install mysql-server
+        run: sudo apt install mysql-server
 
       - name: Starting MySQL
-        runs: sudo systemctl start mysql
+        run: sudo systemctl start mysql
       
       - name: Configuring DB
-        runs: sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ${{secrets.DATABASE_PASSWORD}};"
+        run: sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ${{secrets.DATABASE_PASSWORD}};"
