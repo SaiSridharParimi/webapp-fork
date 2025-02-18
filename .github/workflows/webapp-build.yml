@@ -7,42 +7,61 @@ on:
 
 jobs:
   build:
-    name: Webapp Setup
+    name: WebApp Setup
     runs-on: ubuntu-latest
 
-    steps:
-      # Checkout the code
-      - name: Checkout Code
-        uses: actions/checkout@v2
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
+          MYSQL_USER: ${{ secrets.DATABASE_USERNAME }}
+          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
-      # Install MySQL and dependencies
-      - name: Install MySQL
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up environment variables
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-server mysql-client
-          sudo service mysql start
-          sudo mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_DATABASE }};"
-      
-      # Wait for MySQL to be ready (the `mysql` service on the VM)
-      - name: Wait for MySQL to be ready
+          echo "DATABASE_HOST=127.0.0.1" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_PORT=3306" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
+          echo "DIALECT=${{ secrets.DIALECT }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          cat .env
+
+      - name: Wait for MySQL to be Ready
         run: |
-          for i in {1..30}; do
-            if mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW DATABASES;"; then
-              echo "MySQL is ready!"
-              break
-            fi
+          until mysqladmin ping -h 127.0.0.1 --port=3306 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} --silent; do
             echo "Waiting for MySQL..."
             sleep 5
           done
+          echo "MySQL is ready!"
 
-      # Create a user and grant privileges
-      - name: Create MySQL User and Grant Privileges
+      - name: Configure Database
         run: |
-          mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE USER IF NOT EXISTS '${{ secrets.DB_USERNAME }}'@'%' IDENTIFIED BY '${{ secrets.DB_PASSWORD }}';"
-          mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "GRANT ALL PRIVILEGES ON ${{ secrets.DB_DATABASE }}.* TO '${{ secrets.DB_USERNAME }}'@'%';"
-          mysql -u root -p${{ secrets.DATABASE_PASSWORD }} -e "FLUSH PRIVILEGES;"
+          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DATABASE_NAME }};"
+          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -e "GRANT ALL PRIVILEGES ON ${{ secrets.DATABASE_NAME }}.* TO '${{ secrets.DATABASE_USERNAME }}'@'%'; FLUSH PRIVILEGES;"
 
-      # Create the logs directory
-      - name: Create Log Directory
-        run: |
-          sudo mkdir -p /var/log/webapp
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        working-directory: src
+        run: npx jest
