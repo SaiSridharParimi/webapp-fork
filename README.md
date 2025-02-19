@@ -48,3 +48,28 @@
 - Create a file called `healthz.test.js`
 - Write the test cases in the tests file
 - Run the test cases using `npx jest`
+
+## CI CD Checks 
+- The GitHub Actions workflow will be triggered when a pull request is raised to the **main** branch:
+1. **Checkout Code:**
+   - Retrieves the latest code using `actions/checkout@v3`.
+
+2. **Set Up Environment Variables:**
+   - A `.env` file is created inside the `src` directory with values from GitHub Secrets.
+   - The environment variables include:
+     - `DATABASE_HOST`
+     - `DATABASE_NAME`
+     - `DATABASE_PASSWORD`
+     - `DATABASE_PORT`
+     - `DATABASE_USERNAME`
+     - `DIALECT`
+     - `PORT`
+
+3. **Service Setup:**
+   - A MySQL container is started using the official MySQL 8.0 image with appropriate health checks.
+
+4. **Install Node.js and Dependencies:**
+   - The workflow sets up Node.js (v18) and installs Node dependencies using `npm install`.
+
+5. **Run Tests:**
+   - The test suite is executed using `npx jest`.
