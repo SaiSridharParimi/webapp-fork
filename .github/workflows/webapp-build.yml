@@ -9,7 +9,7 @@ jobs:
   build:
     name: WebApp Setup
     runs-on: ubuntu-latest
-
+ 
     services: #Extra Services
       mysql:
         image: mysql:8.0  #MySQL Container
