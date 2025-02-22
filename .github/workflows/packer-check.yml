@@ -19,6 +19,10 @@ jobs:
       - name: Install Packer 
         uses: hashicorp/setup-packer@main
 
+      - name: Packer Initialization
+        working-directory: src/infra
+        run: packer init .
+
       - name: Packer Format
         working-directory: src/infra
         run: packer fmt .
