@@ -20,9 +20,9 @@ jobs:
         uses: hashicorp/setup-packer@main
 
       - name: Packer Format
-        working-directory: src/scripts
+        working-directory: src/infra
         run: packer fmt -check .
 
       - name: Packer Validate
-        working-directory: src/scripts
+        working-directory: src/infra
         run: packer validate .
