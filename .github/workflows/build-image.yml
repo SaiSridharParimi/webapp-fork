@@ -1,0 +1,43 @@
+name: Building AMI
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Building Machine Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Install Packer 
+        uses: hashicorp/setup-packer@main
+
+      - name: Building Artifact
+        run: zip -r webapp.zip ./
+
+      - name: Setting .env
+        working-directory: src/infra/scripts
+        run: |
+          echo "DATABASE=${{ secrets.DATABASE }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          cat .env
+
+      - name: Packer Initialization
+        working-directory: src/infra
+        run: packer init .
+
+      - name: Building Image
+        working-directory: src/infra
+        run: packer build .
