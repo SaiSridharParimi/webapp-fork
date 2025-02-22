@@ -21,7 +21,7 @@ jobs:
 
       - name: Packer Format
         working-directory: src/scripts
-        run: packer fmt .
+        run: packer fmt -check .
 
       - name: Packer Validate
         working-directory: src/scripts
