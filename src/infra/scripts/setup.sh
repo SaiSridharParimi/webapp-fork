@@ -4,7 +4,7 @@ set -a
 source /tmp/.env
 set +a
 
-echo "DATABASE: $DATABASE"
+echo "DATABASE: $DATABASE_NAME"
 echo "DATABASE: $DATABASE_USERNAME"
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get update --fix-missing
@@ -27,9 +27,12 @@ else
         sudo useradd -m -g csye6225 sridhar
 fi
 
-sudo chown -R sridhar:csye6225 /home/csye6225
-
-sudo mysql -e "CREATE DATABASE ${DATABASE};"
+sudo mysql -e "CREATE DATABASE ${DATABASE_NAME};"
 sudo mysql -e "ALTER USER '${DATABASE_USERNAME}'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}';"
-sudo mysql -e "GRANT ALL PRIVILEGES ON ${DATABASE}.* TO '${DATABASE_USERNAME}'@'localhost';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
+
+sudo mkdir -p /opt/csye6225
+sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
+sudo chown -R csye6225:csye6225 /opt/csye6225
+sudo mv /opt/csye6225/.env /opt/csye6225/webapp/.env
