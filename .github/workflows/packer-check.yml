@@ -22,11 +22,10 @@ jobs:
       - name: Building Artifact
         run: zip -r webapp.zip ./
 
-      - name: Current Directory
-        run: pwd
-
       - name: Viewing Files
-        run: ls -l 
+        run: |
+          pwd
+          ls -ltr
         
       - name: Setting .env
         working-directory: src/infra/scripts
