@@ -28,7 +28,7 @@ jobs:
       - name: Setting .env
         working-directory: src/infra/scripts
         run: |
-          echo "DATABASE=${{ secrets.DATABASE }}" >> .env
+          echo "DATABASE=${{ secrets.DATABASE_NAME }}" >> .env
           echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
           cat .env
