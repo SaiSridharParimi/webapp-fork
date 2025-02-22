@@ -1,20 +1,24 @@
-name: Packer Status Check
+name: Building AMI
 on:
-  pull_request:
+  push:
     branches:
       - main
 
-env:
-  packer-version: ">=1.10.0"
-
 jobs:
-  status-check:
-    name: Packer Validation
+  build:
+    name: Building Machine Image
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
 
       - name: Install Packer 
         uses: hashicorp/setup-packer@main
@@ -22,9 +26,6 @@ jobs:
       - name: Building Artifact
         run: zip -r webapp.zip ./
 
-      - name: Viewing Files
-        run: ls -l 
-        
       - name: Setting .env
         working-directory: src/infra/scripts
         run: |
@@ -37,10 +38,6 @@ jobs:
         working-directory: src/infra
         run: packer init .
 
-      - name: Packer Format
+      - name: Building Image
         working-directory: src/infra
-        run: packer fmt .
-
-      - name: Packer Validate
-        working-directory: src/infra
-        run: packer validate .
+        run: packer build .
