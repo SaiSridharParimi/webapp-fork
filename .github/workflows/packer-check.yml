@@ -20,15 +20,18 @@ jobs:
         uses: hashicorp/setup-packer@main
 
       - name: Building Artifact
-        run: zip -r webapp.zip ./
+        run: zip -r webapp.zip ./*
 
       - name: Viewing Files
-        run: ls -l 
+        run: |
+          pwd
+          ls
+          ls -ltr
         
       - name: Setting .env
         working-directory: src/infra/scripts
         run: |
-          echo "DATABASE=${{ secrets.DATABASE_NAME }}" >> .env 
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env 
           echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
           cat .env
