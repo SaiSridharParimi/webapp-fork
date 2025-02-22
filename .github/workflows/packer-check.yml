@@ -19,6 +19,9 @@ jobs:
       - name: Install Packer 
         uses: hashicorp/setup-packer@main
 
+      - name: Building Artifact
+        run: zip -r webapp.zip ./
+
       - name: Setting .env
         working-directory: src/infra/scripts
         run: |
