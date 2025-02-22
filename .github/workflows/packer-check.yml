@@ -1,0 +1,32 @@
+name: Packer Status Check
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  packer-version: ">=1.10.0"
+
+jobs:
+  status-check:
+    name: Packer Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Packer Format
+        working-directory: src/scripts
+        run: |
+          packer fmt .
+          if ! git diff --exit-code; then
+            exit 1
+          fi
+
+      - name: Packer Validate
+        working-directory: src/scripts
+        run: packer validate .
