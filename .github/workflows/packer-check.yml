@@ -25,6 +25,7 @@ jobs:
       - name: Viewing Files
         run: |
           pwd
+          ls
           ls -ltr
         
       - name: Setting .env
