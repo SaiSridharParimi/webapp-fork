@@ -27,7 +27,7 @@ jobs:
         run: zip -r webapp.zip ./*
 
       - name: Setting .env
-        working-directory: src
+        working-directory: src/infra/scripts
         run: |
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
           echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
