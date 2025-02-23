@@ -6,10 +6,10 @@ After=network.target
 User=csye6225
 Group=csye6225
 WorkingDirectory=/opt/csye6225/webapp/src
-ExecStart=/usr/bin/node /opt/csye6225/webapp/src/index.js
+ExecStart=/usr/bin/node /opt/csye6225/src/index.js
 Restart=always
 RestartSec=10
-EnvironmentFile=/opt/csye6225/webapp/src/.env
+EnvironmentFile=/opt/csye6225/src/.env
 
 [Install]
 WantedBy=multi-user.target

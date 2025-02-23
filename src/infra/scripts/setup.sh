@@ -40,9 +40,8 @@ EOF
 sudo service mysql restart
 
 sudo mkdir -p /opt/csye6225/
-sudo mkdir -p /opt/csye6225/webapp/
-sudo unzip /opt/csye6225/webapp/webapp.zip -d /opt/csye6225/webapp/
-sudo cp /tmp/.env /opt/csye6225/webapp/src/.env
+sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225/
+sudo cp /tmp/.env /opt/csye6225/src/.env
 
 sudo chown -R csye6225:csye6225 /opt/csye6225/
 
