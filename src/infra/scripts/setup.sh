@@ -13,6 +13,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y npm nodejs
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
 
 sudo mkdir -p /home/csye6225
 if [ $(getent group csye6225) ]; then

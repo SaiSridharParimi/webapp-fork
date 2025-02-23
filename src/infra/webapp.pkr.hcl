@@ -51,7 +51,7 @@ build {
 
   provisioner "file" {
     source      = "scripts/.env"
-    destination = "/tmp/.env"
+    destination = "/opt/csye6225/.env"
   }
 
   provisioner "file" {
