@@ -12,7 +12,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y npm
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
@@ -38,6 +37,8 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 sudo mkdir -p /opt/csye6225
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
 sudo cp /tmp/.env /opt/csye6225/src/.env
+
+sudo chmod -R 775 /opt/csye6225/src
 cd /opt/csye6225/src || exit 1
 echo "Installing Node.js dependencies..."
 npm install
