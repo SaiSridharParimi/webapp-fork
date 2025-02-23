@@ -49,10 +49,10 @@ build {
       destination = "/opt/csye6225/webapp.zip"
     }
     
-  provisioner "file" {
-    source      = "scripts/.env" 
-    destination = "/tmp/.env" 
-  }
+  # provisioner "file" {
+  #   source      = "scripts/.env" 
+  #   destination = "/tmp/.env" 
+  # }
 
   provisioner "shell" {
     script = "scripts/setup.sh"
