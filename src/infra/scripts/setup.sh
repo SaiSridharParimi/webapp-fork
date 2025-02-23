@@ -49,3 +49,7 @@ cd /opt/csye6225/src || exit 1
 echo "Installing Node.js dependencies..."
 sudo npm install
 sudo chown -R csye6225:csye6225 node_modules
+
+sudo mv /tmp/webapp.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable webapp.service
