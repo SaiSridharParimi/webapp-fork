@@ -38,6 +38,9 @@ jobs:
           echo "PORT=${{ secrets.PORT }}" >> .env
           cat .env
 
+      - name: Copy .env to Application Directory
+        run: cp src/infra/scripts/.env /opt/csye6225/src/.env
+
       - name: Packer Initialization
         working-directory: src/infra
         run: packer init .
