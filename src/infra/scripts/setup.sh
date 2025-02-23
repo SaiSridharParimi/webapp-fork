@@ -31,12 +31,11 @@ fi
 
 sudo mysql -e "CREATE DATABASE ${DATABASE_NAME};"
 
-sudo mysql -u  '${DATABASE_USERNAME}' <<EOF
+sudo mysql --user=root <<EOF
  ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}';
+ GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';
  FLUSH PRIVILEGES;
 EOF
-sudo mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';"
-sudo mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
 
 sudo mkdir -p /opt/csye6225
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
