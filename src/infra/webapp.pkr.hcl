@@ -50,10 +50,10 @@ build {
     }
 
   provisioner "file"{
-    source = "scripts/webapp.service"
+    source = "webapp.service"
     destination = "/tmp/webapp.service"
   }  
-  
+
   provisioner "file" {
     source      = "scripts/.env" 
     destination = "/tmp/.env" 
