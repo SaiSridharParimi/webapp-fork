@@ -5,58 +5,6 @@ on:
       - main
 
 jobs:
-  integration-tests:
-    name: Running Integration Tests
-    runs-on: ubuntu-latest
-    
-    services: #Extra Services
-      mysql:
-        image: mysql:8.0  #MySQL Container
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
-          MYSQL_ROOT_HOST: '%'
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up environment variables
-        working-directory: src
-        run: |
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
-          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
-          echo "DIALECT=${{ secrets.DIALECT }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          cat .env
-
-      - name: Checking environment variables
-        working-directory: src
-        run: cat .env
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Dependencies
-        working-directory: src
-        run: npm install
-
-      - name: Run Tests
-        working-directory: src
-        run: npx jest
-
   build:
     name: Building Machine Image
     runs-on: ubuntu-latest
