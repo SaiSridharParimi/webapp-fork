@@ -1,0 +1,15 @@
+[Unit]
+Description=WebApp Service
+After=network.target
+
+[Service]
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt/csye6225/webapp/src
+ExecStart=/usr/bin/node /opt/csye6225/webapp/src/index.js
+Restart=always
+RestartSec=10
+EnvironmentFile=/opt/csye6225/webapp/src/.env
+
+[Install]
+WantedBy=multi-user.target
