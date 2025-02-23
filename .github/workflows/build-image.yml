@@ -32,6 +32,10 @@ jobs:
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
           echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
+          echo "DIALECT=${{ secrets.DIALECT }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
           cat .env
 
       - name: Packer Initialization

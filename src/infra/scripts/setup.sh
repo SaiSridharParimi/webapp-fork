@@ -30,7 +30,7 @@ else
 fi
 
 sudo mysql -e "CREATE DATABASE ${DATABASE_NAME};"
-sudo mysql -e "ALTER USER '${DATABASE_USERNAME}'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}';"
+sudo mysql -e "ALTER USER '${DATABASE_USERNAME}'@'localhost' IDENTIFIED WITH mysql_native_password '${DATABASE_PASSWORD}';"
 sudo mysql -e "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
 
