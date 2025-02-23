@@ -33,6 +33,7 @@ sudo mysql -e "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAM
 sudo mysql -e "FLUSH PRIVILEGES;"
 
 sudo mkdir -p /opt/csye6225
-sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
 sudo chown -R csye6225:csye6225 /opt/csye6225
+sudo find /opt/csye6225 -type d -exec chmod 750 {} \;
+sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
 sudo mv /opt/csye6225/.env /opt/csye6225/webapp/.env
