@@ -36,6 +36,14 @@ build {
     "source.amazon-ebs.ubuntu"
   ]
 
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /opt/csye6225",
+      "sudo chown -R ubuntu:ubuntu /opt/csye6225", 
+      "sudo chmod 775 /opt/csye6225"
+    ]
+  }
+
   provisioner "file" {
       source      = "/home/runner/work/webapp/webapp/webapp.zip"
       destination = "/opt/csye6225/webapp.zip"
