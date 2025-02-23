@@ -37,6 +37,8 @@ sudo mysql --user=root <<EOF
  FLUSH PRIVILEGES;
 EOF
 
+sudo service mysql restart
+
 sudo mkdir -p /opt/csye6225
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
 sudo cp /tmp/.env /opt/csye6225/src/.env
