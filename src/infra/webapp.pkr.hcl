@@ -48,7 +48,12 @@ build {
       source      = "/home/runner/work/webapp/webapp/webapp.zip"
       destination = "/opt/csye6225/webapp.zip"
     }
-    
+
+  provisioner "file"{
+    source = "scripts/webapp.service"
+    destination = "/tmp/webapp.service"
+  }  
+  
   provisioner "file" {
     source      = "scripts/.env" 
     destination = "/tmp/.env" 
