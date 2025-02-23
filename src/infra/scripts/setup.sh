@@ -38,7 +38,7 @@ sudo mkdir -p /opt/csye6225
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
 sudo cp /tmp/.env /opt/csye6225/src/.env
 
+sudo chown -R csye6225:csye6225 /opt/csye6225/src
 sudo chmod -R 775 /opt/csye6225/src
-cd /opt/csye6225/src || exit 1
-echo "Installing Node.js dependencies..."
-npm install
+
+sudo -u csye6225 npm install --unsafe-perm --loglevel=error --prefix /opt/csye6225/src
