@@ -45,7 +45,7 @@ sudo cp /tmp/.env /opt/csye6225/src/.env
 
 sudo chown -R csye6225:csye6225 /opt/csye6225/
 
-cd /opt/csye6225/webapp/src || exit 1
+cd /opt/csye6225/src || exit 1
 echo "Installing Node.js dependencies..."
 sudo npm install
 sudo chown -R csye6225:csye6225 node_modules
