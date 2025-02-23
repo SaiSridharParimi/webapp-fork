@@ -39,6 +39,7 @@ build {
   provisioner "file" {
       source      = "/home/runner/work/webapp/webapp/webapp.zip"
       destination = "/opt/csye6225/webapp.zip"
+      chmod = "0775"
     }
 
   provisioner "file" {
