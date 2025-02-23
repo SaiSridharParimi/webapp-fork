@@ -35,4 +35,3 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 
 sudo mkdir -p /opt/csye6225
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
-sudo mv /opt/csye6225/.env /opt/csye6225/webapp/.env
