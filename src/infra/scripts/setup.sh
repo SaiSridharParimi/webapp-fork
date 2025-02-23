@@ -22,10 +22,10 @@ else
         sudo groupadd csye6225
 fi 
 
-if id "sridhar" &>/dev/null; then
+if id "csye6225" &>/dev/null; then
         log "User already exists.. skipping user creation"
 else
-        sudo useradd -m -g csye6225 sridhar
+        sudo useradd -m -g csye6225 csye6225
 fi
 
 sudo mysql -e "CREATE DATABASE ${DATABASE_NAME};"
@@ -35,3 +35,7 @@ sudo mysql -e "FLUSH PRIVILEGES;"
 
 sudo mkdir -p /opt/csye6225
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225
+sudo cp /tmp/.env /opt/csye6225/src/.env
+cd /opt/csye6225/src || exit 1
+echo "Installing Node.js dependencies..."
+npm install
