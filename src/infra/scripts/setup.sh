@@ -12,7 +12,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
+sudo apt-get install -y nodejs --no-install-recommends
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
 
 sudo mkdir -p /home/csye6225
