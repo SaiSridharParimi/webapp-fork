@@ -4,6 +4,10 @@ packer {
       version = ">= 1.1.4"
       source  = "github.com/hashicorp/amazon"
     }
+    googlecompute = {
+      version = ">= 1.0.0"
+      source  = "github.com/hashicorp/googlecompute"
+    }
   }
 }
 
@@ -30,10 +34,24 @@ source "amazon-ebs" "ubuntu" {
   }
 }
 
+source "googlecompute" "ubuntu" {
+  project_id   = var.gcp_project_id
+  source_image = "ubuntu-2204-jammy-v20231030"
+  zone         = var.gcp_zone
+  machine_type = "e2-micro"
+  ssh_username = var.username
+  image_name   = "gcp-packer-image-{{timestamp}}"
+  image_family = "webapp"
+  disk_size    = 25
+  disk_type    = "pd-standard"
+  account_file = var.account_file
+}
+
 build {
   name = "learn-packer"
   sources = [
-    "source.amazon-ebs.ubuntu"
+    "source.amazon-ebs.ubuntu",
+    "source.googlecompute.ubuntu"
   ]
 
   provisioner "shell" {
