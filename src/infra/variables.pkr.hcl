@@ -30,5 +30,5 @@ variable "account_file" {
 
 variable "ami_users" {
   type = string
-  default = env("AMI_USERS")
+  default = env("AMI_USER")
 }
