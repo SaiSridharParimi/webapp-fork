@@ -24,7 +24,7 @@ jobs:
 
       - name: Setting GCP Access Key
         working-directory: src/infra
-        run: |
+        run: | 
           echo '{{ secrets.GCP_CREDENTIALS }}' >> .gcp-key.json
 
       - name: Viewing Files
