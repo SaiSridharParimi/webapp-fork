@@ -32,6 +32,7 @@ source "amazon-ebs" "ubuntu" {
     volume_type           = "gp2"
     delete_on_termination = true
   }
+  ami_users = [var.ami_users]
 }
 
 source "googlecompute" "ubuntu" {
