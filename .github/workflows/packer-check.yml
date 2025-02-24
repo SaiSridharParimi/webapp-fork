@@ -35,6 +35,10 @@ jobs:
         run: | 
           echo "{{ secrets.GCP_CREDENTIALS }}" >> .gcp-key.json
 
+      - name: Debug
+        working-directory: src/infra
+        run: cat .gcp-key.json
+
       - name: Viewing Files
         run: |
           pwd
