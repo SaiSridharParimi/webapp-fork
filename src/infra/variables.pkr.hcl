@@ -9,8 +9,8 @@ variable "profile" {
 }
 
 variable "region" {
-    type = string
-    default = "us-west-2"
+  type    = string
+  default = "us-west-2"
 }
 
 variable "gcp_project_id" {
@@ -23,7 +23,7 @@ variable "gcp_zone" {
   default = "us-central1-a"
 }
 
-variable "account_file"{
-  type = string
+variable "account_file" {
+  type    = string
   default = ".gcp-key.json"
 }
