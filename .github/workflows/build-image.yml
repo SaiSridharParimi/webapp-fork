@@ -31,7 +31,7 @@ jobs:
       - name: Setting GCP Access Key
         working-directory: src/infra
         run: |
-          echo "${{ secrets.GCP_CREDENTIALS }}" >> .gcp-key.json
+          echo '${{ secrets.GCP_CREDENTIALS }}' >> .gcp-key.json
 
       - name: Install Packer 
         uses: hashicorp/setup-packer@main
