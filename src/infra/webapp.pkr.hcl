@@ -45,7 +45,7 @@ source "googlecompute" "ubuntu" {
   image_family     = "webapp"
   disk_size        = 25
   disk_type        = "pd-ssd"
-  credentials_file = var.account_file
+  credentials_file = [var.account_file]
 }
 
 build {
