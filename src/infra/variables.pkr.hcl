@@ -27,3 +27,8 @@ variable "account_file" {
   type    = string
   default = ".gcp-key.json"
 }
+
+variable "ami_users" {
+  type = string
+  default = env("AMI_USERS")
+}
