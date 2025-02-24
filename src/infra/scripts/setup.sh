@@ -9,7 +9,6 @@ echo "DATABASE: $DATABASE_USERNAME"
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get update --fix-missing
 sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
