@@ -32,7 +32,7 @@ source "amazon-ebs" "ubuntu" {
     volume_type           = "gp2"
     delete_on_termination = true
   }
-  ami_users = var.ami_users
+  ami_users = [var.ami_users]
 }
 
 source "googlecompute" "ubuntu" {
@@ -45,7 +45,7 @@ source "googlecompute" "ubuntu" {
   image_family     = "webapp"
   disk_size        = 25
   disk_type        = "pd-ssd"
-  credentials_file = [var.account_file]
+  credentials_file = var.account_file
 }
 
 build {
