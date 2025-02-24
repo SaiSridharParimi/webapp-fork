@@ -1,4 +1,4 @@
-name: Building AMI
+name: Building Machine Image
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Building Machine Image
+    name: Building MI for AWS & GCP
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +19,19 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
+
+      - name: Configure GCP Credentials
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setting GCP SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setting GCP Access Key
+        working-directory: src/infra
+        run: |
+          echo '${{ secrets.GCP_CREDENTIALS }}' >> .gcp-key.json
 
       - name: Install Packer 
         uses: hashicorp/setup-packer@main
