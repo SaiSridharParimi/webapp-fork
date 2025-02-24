@@ -40,10 +40,10 @@ source "googlecompute" "ubuntu" {
   zone             = var.gcp_zone
   machine_type     = "e2-micro"
   ssh_username     = var.username
-  image_name       = "gcp-packer-image-{{timestamp}}"
+  image_name       = "gcp-packer-1"
   image_family     = "webapp"
   disk_size        = 25
-  disk_type        = "pd-standard"
+  disk_type        = "pd-ssd"
   credentials_file = var.account_file
 }
 
