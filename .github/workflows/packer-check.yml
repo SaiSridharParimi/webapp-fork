@@ -51,6 +51,7 @@ jobs:
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env 
           echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "AMI_USER=${{ secrets.AMI_USER }}" >> .env
           cat .env
 
       - name: Packer Initialization
@@ -63,4 +64,6 @@ jobs:
 
       - name: Packer Validate
         working-directory: src/infra
+        env:
+          AMI_USER: ${{ secrets.AMI_USER }}
         run: packer validate .

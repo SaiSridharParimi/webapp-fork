@@ -69,4 +69,6 @@ jobs:
 
       - name: Building Image
         working-directory: src/infra
+        env:
+          AMI_USER: ${{ secrets.AMI_USER }}
         run: packer build .
