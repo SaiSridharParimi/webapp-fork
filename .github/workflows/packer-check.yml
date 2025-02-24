@@ -22,6 +22,14 @@ jobs:
       - name: Building Artifact
         run: zip -r webapp.zip ./*
 
+      - name: Configure GCP Credentials
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Setting GCP SDK
+        uses: google-github-actions/setup-gcloud@v0
+
       - name: Setting GCP Access Key
         working-directory: src/infra
         run: | 
