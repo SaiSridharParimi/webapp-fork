@@ -37,15 +37,16 @@ source "amazon-ebs" "ubuntu" {
 
 source "googlecompute" "ubuntu" {
   project_id       = var.gcp_project_id
-  source_image     = "ubuntu-2204-jammy-v20231030"
+  source_image     = "ubuntu-2404-noble-v20240130"
   zone             = var.gcp_zone
   machine_type     = "e2-micro"
   ssh_username     = var.username
-  image_name       = "gcp-packer-1"
+  image_name       = var.image_name
   image_family     = "webapp"
   disk_size        = 25
   disk_type        = "pd-ssd"
   credentials_file = var.account_file
+
 }
 
 build {
@@ -80,5 +81,16 @@ build {
 
   provisioner "shell" {
     script = "scripts/setup.sh"
+  }
+
+  post-processor "shell-local" {
+    inline = [
+      <<-EOT
+      gcloud compute images create ${var.image_name}-demo \
+        --project=${var.demo_project_id} \
+        --source-image=${var.image_name} \
+        --source-image-project=${var.gcp_project_id}
+      EOT
+    ]
   }
 }
