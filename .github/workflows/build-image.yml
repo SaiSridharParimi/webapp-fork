@@ -71,4 +71,6 @@ jobs:
         working-directory: src/infra
         env:
           AMI_USER: ${{ secrets.AMI_USER }}
+          DEMO_PROJECT_ID: ${{ secrets.DEMO_PROJECT_ID }}
+          DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
         run: packer build .

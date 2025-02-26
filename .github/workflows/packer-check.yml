@@ -66,4 +66,6 @@ jobs:
         working-directory: src/infra
         env:
           AMI_USER: ${{ secrets.AMI_USER }}
+          DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
+          DEMO_PROJECT_ID: ${{ secrets.DEMO_PROJECT_ID }}
         run: packer validate .

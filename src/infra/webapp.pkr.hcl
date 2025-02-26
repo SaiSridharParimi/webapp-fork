@@ -81,4 +81,10 @@ build {
   provisioner "shell" {
     script = "scripts/setup.sh"
   }
+
+  post-processor "googlecompute-import" {
+    source_project = var.gcp_project_id
+    destination_project = var.demo_project_id
+    destination_image_name = "gcp-packer-1-demo"
+  }
 }

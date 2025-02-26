@@ -15,7 +15,7 @@ variable "region" {
 
 variable "gcp_project_id" {
   type    = string
-  default = "webapp-dev-451904"
+  default = env("DEV_PROJECT_ID")
 }
 
 variable "gcp_zone" {
@@ -31,4 +31,9 @@ variable "account_file" {
 variable "ami_users" {
   type = string
   default = env("AMI_USER")
+}
+
+variable "demo_project_id"{
+  type = string
+  default = env("DEMO_PROJECT_ID")
 }
