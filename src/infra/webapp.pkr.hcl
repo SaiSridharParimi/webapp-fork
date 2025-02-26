@@ -85,10 +85,12 @@ build {
 
   post-processor "shell-local" {
     inline = [
-      "gcloud compute images create ${var.image_name}-demo \
+      <<-EOT
+      gcloud compute images create ${var.image_name}-demo \
         --project=${var.demo_project_id} \
         --source-image=${var.image_name} \
-        --source-image-project=${var.gcp_project_id}"
+        --source-image-project=${var.gcp_project_id}
+      EOT
     ]
   }
 }
