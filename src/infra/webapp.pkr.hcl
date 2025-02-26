@@ -41,11 +41,12 @@ source "googlecompute" "ubuntu" {
   zone             = var.gcp_zone
   machine_type     = "e2-micro"
   ssh_username     = var.username
-  image_name       = "gcp-packer-1"
+  image_name       = var.image_name
   image_family     = "webapp"
   disk_size        = 25
   disk_type        = "pd-ssd"
   credentials_file = var.account_file
+
 }
 
 build {
@@ -82,9 +83,12 @@ build {
     script = "scripts/setup.sh"
   }
 
-  post-processor "googlecompute-import" {
-    source_project         = var.gcp_project_id
-    destination_project    = var.demo_project_id
-    destination_image_name = "gcp-packer-1-demo"
+  post-processor "shell-local" {
+    inline = [
+      "gcloud compute images create ${var.image_name}-demo \
+        --project=${var.demo_project_id} \
+        --source-image=${var.image_name} \
+        --source-image-project=${var.gcp_project_id}"
+    ]
   }
 }

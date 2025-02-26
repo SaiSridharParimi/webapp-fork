@@ -37,3 +37,8 @@ variable "demo_project_id" {
   type    = string
   default = env("DEMO_PROJECT_ID")
 }
+
+variable "image_name"{
+  type = string
+  default = "gcp-image"
+}
