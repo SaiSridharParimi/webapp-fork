@@ -29,11 +29,11 @@ variable "account_file" {
 }
 
 variable "ami_users" {
-  type = string
+  type    = string
   default = env("AMI_USER")
 }
 
-variable "demo_project_id"{
-  type = string
+variable "demo_project_id" {
+  type    = string
   default = env("DEMO_PROJECT_ID")
 }

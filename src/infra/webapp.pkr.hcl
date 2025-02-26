@@ -37,7 +37,7 @@ source "amazon-ebs" "ubuntu" {
 
 source "googlecompute" "ubuntu" {
   project_id       = var.gcp_project_id
-  source_image     = "ubuntu-2204-jammy-v20231030"
+  source_image     = "ubuntu-2404-noble-v20240130"
   zone             = var.gcp_zone
   machine_type     = "e2-micro"
   ssh_username     = var.username
@@ -64,7 +64,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "/home/runner/work/webapp/webapp/webapp.zip" 
+    source      = "/home/runner/work/webapp/webapp/webapp.zip"
     destination = "/opt/csye6225/webapp.zip"
   }
 
@@ -83,8 +83,8 @@ build {
   }
 
   post-processor "googlecompute-import" {
-    source_project = var.gcp_project_id
-    destination_project = var.demo_project_id
+    source_project         = var.gcp_project_id
+    destination_project    = var.demo_project_id
     destination_image_name = "gcp-packer-1-demo"
   }
 }
