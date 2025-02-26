@@ -37,7 +37,7 @@ source "amazon-ebs" "ubuntu" {
 
 source "googlecompute" "ubuntu" {
   project_id       = var.gcp_project_id
-  source_image     = "ubuntu-2404-jammy-v20240214"
+  source_image     = "ubuntu-2204-jammy-v20231030"
   zone             = var.gcp_zone
   machine_type     = "e2-micro"
   ssh_username     = var.username
