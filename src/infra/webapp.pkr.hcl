@@ -82,16 +82,4 @@ build {
   provisioner "shell" {
     script = "scripts/setup.sh"
   }
-
-  post-processor "shell-local" {
-    only = ["googlecompute.ubuntu"]
-    inline = [
-      <<-EOT
-      gcloud compute images create ${var.image_name}-demo \
-        --project=${var.demo_project_id} \
-        --source-image=${var.image_name} \
-        --source-image-project=${var.gcp_project_id}
-      EOT
-    ]
-  }
 }
