@@ -84,6 +84,7 @@ build {
   }
 
   post-processor "shell-local" {
+    only = ["googlecompute.ubuntu"]
     inline = [
       <<-EOT
       gcloud compute images create ${var.image_name}-demo \
