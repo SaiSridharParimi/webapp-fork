@@ -9,7 +9,7 @@ variable "profile" {
 }
 
 variable "region" {
-    type    = string
+  type    = string
   default = "us-west-2"
 }
 
@@ -19,7 +19,7 @@ variable "gcp_project_id" {
 }
 
 variable "gcp_zone" {
-  type    = string
+        type    = string
   default = "us-central1-a"
 }
 
@@ -38,7 +38,7 @@ variable "demo_project_id" {
   default = env("DEMO_PROJECT_ID")
 }
 
-variable "image_name"{
-  type = string
+variable "image_name" {
+  type    = string
   default = "gcp-image"
 }

@@ -43,7 +43,7 @@ source "googlecompute" "ubuntu" {
   ssh_username     = var.username
   image_name       = var.image_name
   image_family     = "webapp"
-  disk_size        = 25 
+  disk_size        = 25
   disk_type        = "pd-ssd"
   credentials_file = var.account_file
 
