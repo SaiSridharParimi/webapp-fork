@@ -3,7 +3,7 @@ variable "username" {
   default = "ubuntu"
 }
 
-variable "profile" {
+      variable "profile" {
   type    = string
   default = "github"
 }
