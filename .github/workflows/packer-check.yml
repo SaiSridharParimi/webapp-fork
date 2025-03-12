@@ -60,7 +60,7 @@ jobs:
 
       - name: Packer Format
         working-directory: src/infra
-        run: packer fmt .
+        run: packer fmt -check -recursive
 
       - name: Packer Validate
         working-directory: src/infra
