@@ -3,11 +3,10 @@ variable "username" {
   default = "ubuntu"
 }
 
-#       variable "profile" {
-#   type    = string
-#   default = "github"
-# }
-
+variable "profile" {
+  type    = string
+  default = "github"
+}
 
 variable "region" {
   type    = string
