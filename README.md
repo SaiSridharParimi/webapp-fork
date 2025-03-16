@@ -60,7 +60,7 @@
      - `DATABASE_HOST`
      - `DATABASE_NAME`
      - `DATABASE_PASSWORD`
-     - `DATABASE_PORT`
+     - `DATABASE_PORT` 
      - `DATABASE_USERNAME`
      - `DIALECT`
      - `PORT`
