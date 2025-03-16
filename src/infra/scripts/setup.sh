@@ -15,7 +15,7 @@ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs --no-install-recommends
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
 
-sudo mkdir -p /home/csye6225
+sudo mkdir -p /home/csye6225 
 if [ $(getent group csye6225) ]; then
         log "Group already exists.. skipping group creation"
 else
