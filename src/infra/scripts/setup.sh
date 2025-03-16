@@ -9,8 +9,8 @@ echo "DATABASE: $DATABASE_USERNAME"
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get update --fix-missing
 sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+# sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
+# sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs --no-install-recommends
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
@@ -28,15 +28,15 @@ else
         sudo useradd -m -g csye6225 csye6225
 fi
 
-sudo mysql --user=root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
-CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME};
-CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';
-FLUSH PRIVILEGES;
-EOF
+# sudo mysql --user=root <<EOF
+# ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
+# CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME};
+# CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
+# GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';
+# FLUSH PRIVILEGES;
+# EOF
 
-sudo service mysql restart
+# sudo service mysql restart
 
 sudo mkdir -p /opt/csye6225/
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225/
