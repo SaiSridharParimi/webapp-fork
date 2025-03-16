@@ -97,6 +97,12 @@ describe("Tests for healthz API", () => {
     }))
 })
 
+afterEach(async () => {
+    if (!sequelize.connectionManager.pool) {
+        await sequelize.authenticate(); 
+    }
+});
+
 afterAll(async()=>{
     await sequelize.close()
     server.close()
