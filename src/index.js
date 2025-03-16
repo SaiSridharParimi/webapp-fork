@@ -3,7 +3,7 @@ const app = express()
 app.use(express.json())
 require("dotenv").config()
 const {sequelize} = require("./config/database");
-const { HealthRouter } = require("./routes/routes");
+const { HealthRouter, FileRouter } = require("./routes/routes");
 
 const server = app.listen(process.env.PORT || 8080, (()=>{
     console.log("Server is listening on port "+process.env.PORT)
@@ -16,6 +16,7 @@ sequelize.authenticate().then(()=>{
 })
 
 app.use("/healthz", HealthRouter)
+app.use("/v1/file", FileRouter)
 
 app.use("*", (_, res) => {
     res.status(400).send();

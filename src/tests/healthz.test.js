@@ -4,8 +4,13 @@ const { sequelize } = require("../config/database")
 const {execSync} = require("child_process")
 
 beforeAll(async() => {
-    await sequelize.authenticate().then(() => {
+    await sequelize.authenticate().then(async() => {
         console.log("Connected to DB using tests")
+        const [results] = await sequelize.query("SHOW TABLES;");
+        console.log("Existing Tables: ", results);
+        const [results1] = await sequelize.query("SHOW TABLES;");
+        console.log("Existing Tables: ", results1);
+        await sequelize.sync({force:true})
     }).catch((err) => {
         console.log("Unable to create DB during tests" + err)
     })
@@ -96,6 +101,12 @@ describe("Tests for healthz API", () => {
         });
     }))
 })
+
+afterEach(async () => {
+    if (!sequelize.connectionManager.pool) {
+        await sequelize.authenticate(); 
+    }
+});
 
 afterAll(async()=>{
     await sequelize.close()
