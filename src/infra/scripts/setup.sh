@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -a
-source /tmp/.env
-set +a
+# set -a
+# # source /tmp/.env
+# set +a
 
 echo "DATABASE: $DATABASE_NAME"
 echo "DATABASE: $DATABASE_USERNAME"
@@ -40,7 +40,7 @@ fi
 
 sudo mkdir -p /opt/csye6225/
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225/
-sudo cp /tmp/.env /opt/csye6225/src/.env
+# sudo cp /tmp/.env /opt/csye6225/src/.env
 
 sudo chown -R csye6225:csye6225 /opt/csye6225/
 
