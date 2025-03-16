@@ -4,8 +4,10 @@ const { sequelize } = require("../config/database")
 const {execSync} = require("child_process")
 
 beforeAll(async() => {
-    await sequelize.authenticate().then(() => {
+    await sequelize.authenticate().then(async() => {
         console.log("Connected to DB using tests")
+        const [results] = await sequelize.query("SHOW TABLES;");
+        console.log("Existing Tables: ", results);
     }).catch((err) => {
         console.log("Unable to create DB during tests" + err)
     })

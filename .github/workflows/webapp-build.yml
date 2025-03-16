@@ -58,6 +58,10 @@ jobs:
       - name: Install Dependencies
         working-directory: src
         run: npm install
+      
+      - name: Check Database Tables
+        run: |
+          mysql -h 127.0.0.1 -u${{ secrets.DATABASE_USERNAME }} -p${{ secrets.DATABASE_PASSWORD }} -D ${{ secrets.DATABASE_NAME }} -e "SHOW TABLES;"
 
       - name: Run Tests
         working-directory: src
