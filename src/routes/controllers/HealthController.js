@@ -12,6 +12,7 @@ async function HealthController(req,res){
         await HealthCheck.create({DateTime : new Date().toISOString()});
         res.status(200).send();
     }catch(err){
+        console.log(err)
         res.status(503).send();
         return;
     }
