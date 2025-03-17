@@ -23,7 +23,7 @@ const File = sequelize.define("File", {
     timestamps : false
 })
 
-sequelize.sync({alter:true})
+sequelize.sync({force:true})
 
 module.exports = {
     File : File
