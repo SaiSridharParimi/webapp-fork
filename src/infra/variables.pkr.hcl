@@ -19,7 +19,7 @@ variable "gcp_project_id" {
 }
 
 variable "gcp_zone" {
-        type    = string
+  type    = string
   default = "us-central1-a"
 }
 
@@ -41,4 +41,9 @@ variable "demo_project_id" {
 variable "image_name" {
   type    = string
   default = "gcp-image"
+}
+
+variable "cloud_provider" {
+  type    = string
+  default = "gcp"
 }

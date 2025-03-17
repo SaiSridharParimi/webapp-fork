@@ -80,12 +80,12 @@ build {
 
   provisioner "shell" {
     script = "scripts/setup.sh"
-    environment_vars=[
-      "CLOUD_PROVIDER=${local.cloud_provider}"
+    environment_vars = [
+      "CLOUD_PROVIDER=${var.cloud_provider}"
     ]
   }
 
-  post-processor "shell" {
+  provisioner "shell" {
     inline = [
       "gcloud compute images create ${var.image_name} --source-image=${var.image_name} --source-image-project=${var.gcp_project_id} --project=${var.demo_project_id}"
     ]
