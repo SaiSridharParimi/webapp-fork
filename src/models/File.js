@@ -5,8 +5,9 @@ const File = sequelize.define("File", {
     file_name :{
         type : DataTypes.STRING,
     },
-    file_id :{
-        type : DataTypes.STRING,
+    id :{
+        type : DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey : true
     },
     url :{
@@ -21,6 +22,8 @@ const File = sequelize.define("File", {
     tableName : 'File',
     timestamps : false
 })
+
+sequelize.sync({force:false})
 
 module.exports = {
     File : File

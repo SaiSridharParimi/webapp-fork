@@ -29,7 +29,7 @@ source "amazon-ebs" "ubuntu" {
   launch_block_device_mappings {
     device_name           = "/dev/sda1"
     volume_size           = 25
-    volume_type           = "gp2"
+    volume_type           = "gp3"
     delete_on_termination = true
   }
   ami_users = [var.ami_users]
@@ -46,7 +46,6 @@ source "googlecompute" "ubuntu" {
   disk_size        = 25
   disk_type        = "pd-ssd"
   credentials_file = var.account_file
-
 }
 
 build {
@@ -81,5 +80,19 @@ build {
 
   provisioner "shell" {
     script = "scripts/setup.sh"
+    environment_vars=[
+      "CLOUD_PROVIDER=${local.cloud_provider}"
+    ]
+  }
+
+  post-processor "shell" {
+    inline = [
+      "echo 'Sharing image with demo project...'",
+      "gcloud compute images create ${var.image_name} \
+        --source-image=${var.image_name} \
+        --source-image-project=${var.gcp_project_id} \
+        --project=${var.demo_project_id}"
+      "echo 'Image shared with DEMO project.'"
+    ]
   }
 }

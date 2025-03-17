@@ -20,9 +20,10 @@ async function FileController(req, res){
             const file = req.file;
             console.log(file.originalname)
 
+            const fileId = uuidv4();
             const uploadParams = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: `user-uploads/${file.originalname}`,
+                Key: `${fileId}/${file.originalname}`,
                 Body: file.buffer,
                 ContentType: file.mimetype,
             }
@@ -30,13 +31,13 @@ async function FileController(req, res){
             const uploadDate = new Date().toISOString().split("T")[0];
             const dbResult = await File.create({
                 file_name: file.originalname,
-                file_id: uuidv4().toString(),
+                id: fileId,
                 url: uploadParams.Key,
                 upload_date: uploadDate,
             })
             return res.status(201).json({
                 file_name: file.originalname,
-                file_id: dbResult.file_id,
+                id: dbResult.id,
                 url: uploadParams.Key,
                 upload_date: uploadDate
             });
@@ -44,21 +45,21 @@ async function FileController(req, res){
     }
 
     else if(req.method==="GET"){
-        const {id} = await req.params;
+        const {id} = req.params;
         console.log(id)
         if(!id){
             console.log("ID IS HERE")
             res.status(400).send()
             return;
         }
-        const fileRecord = await File.findOne({ where: { file_id: id } });
+        const fileRecord = await File.findOne({ where: { id: id } });
         if(!fileRecord){
             res.status(404).send()
             return;
         }
         res.status(200).send({
             file_name: fileRecord.file_name,
-            file_id: fileRecord.file_id,
+            id: fileRecord.id,
             url: fileRecord.url,
             upload_date: fileRecord.upload_date,
         })
@@ -70,7 +71,7 @@ async function FileController(req, res){
             res.status(404).send()
             return;
         }
-        const fileRecord = await File.findOne( { where: { file_id: id } } )
+        const fileRecord = await File.findOne( { where: { id: id } } )
         console.log(fileRecord)
         if(!fileRecord){
             res.status(404).send()
@@ -81,7 +82,7 @@ async function FileController(req, res){
             Key: fileRecord.url
         }
         const response = await s3.deleteObject(deleteParams).promise()
-        const dbResponse = await File.destroy({where : {file_id : id}})
+        const dbResponse = await File.destroy({where : {id : id}})
         res.status(204).send()
     }
 }
