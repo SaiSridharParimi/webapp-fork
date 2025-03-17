@@ -10,6 +10,7 @@ const server = app.listen(process.env.PORT || 8080, (()=>{
 }))
 
 sequelize.authenticate().then(()=>{
+    sequelize.sync({alter:true})
     console.log("Database connected")
 }).catch((err)=>{
     console.log("Error connecting DB "+err)
