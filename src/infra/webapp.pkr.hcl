@@ -87,12 +87,7 @@ build {
 
   post-processor "shell" {
     inline = [
-      "echo 'Sharing image with demo project...'",
-      "gcloud compute images create ${var.image_name} \
-        --source-image=${var.image_name} \
-        --source-image-project=${var.gcp_project_id} \
-        --project=${var.demo_project_id}"
-      "echo 'Image shared with DEMO project.'"
+      "gcloud compute images create ${var.image_name} --source-image=${var.image_name} --source-image-project=${var.gcp_project_id} --project=${var.demo_project_id}"
     ]
   }
 }
