@@ -16,7 +16,7 @@ const HealthCheck = sequelize.define("Health", {
     timestamps : false
 })
 
-sequelize.sync({force:false})
+sequelize.sync({alter:true})
 
 module.exports = {
     HealthCheck : HealthCheck
