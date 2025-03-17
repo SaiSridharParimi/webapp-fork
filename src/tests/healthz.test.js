@@ -10,7 +10,7 @@ beforeAll(async() => {
         console.log("Existing Tables: ", results);
         const [results1] = await sequelize.query("SHOW TABLES;");
         console.log("Existing Tables: ", results1);
-        return sequelize.sync({force:true})
+        await sequelize.sync({force:true})
     }).catch((err) => {
         console.log("Unable to create DB during tests" + err)
     })
