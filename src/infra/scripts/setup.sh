@@ -1,21 +1,21 @@
 #!/bin/bash
 
-if [ "$CLOUD_PROVIDER" = "gcp" ]; then
-        set -a
-        source /tmp/.env
-        set +a
-fi
+# if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+#         set -a
+#         source /tmp/.env
+#         set +a
+# fi
 
-echo "DATABASE: $DATABASE_NAME"
-echo "DATABASE: $DATABASE_USERNAME"
+# echo "DATABASE: $DATABASE_NAME"
+# echo "DATABASE: $DATABASE_USERNAME"
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get update --fix-missing
 sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
 
-if [ "$CLOUD_PROVIDER" = "gcp" ]; then
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
-fi
+# if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+#         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client-8.0 mysql-server-core-8.0
+#         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+# fi
 
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs --no-install-recommends
@@ -34,17 +34,17 @@ else
         sudo useradd -m -g csye6225 csye6225
 fi
 
-if [ "$CLOUD_PROVIDER" = "gcp" ]; then
-sudo mysql --user=root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
-CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME};
-CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';
-FLUSH PRIVILEGES;
-EOF
+# if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+# sudo mysql --user=root <<EOF
+# ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
+# CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME};
+# CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${DATABASE_PASSWORD}';
+# GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_USERNAME}'@'localhost';
+# FLUSH PRIVILEGES;
+# EOF
 
-sudo service mysql restart
-fi
+# sudo service mysql restart
+# fi
 
 sudo mkdir -p /opt/csye6225/
 sudo unzip /opt/csye6225/webapp.zip -d /opt/csye6225/

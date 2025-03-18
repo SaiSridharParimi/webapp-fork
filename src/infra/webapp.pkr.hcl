@@ -29,7 +29,7 @@ source "amazon-ebs" "ubuntu" {
   launch_block_device_mappings {
     device_name           = "/dev/sda1"
     volume_size           = 25
-    volume_type           = "gp3"
+    volume_type           = "gp2"
     delete_on_termination = true
   }
   ami_users = [var.ami_users]
