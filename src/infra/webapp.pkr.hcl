@@ -42,7 +42,7 @@ source "googlecompute" "ubuntu" {
   machine_type     = "e2-micro"
   ssh_username     = var.username
   image_name       = var.image_name
-  image_family     = "webapp"
+  image_family     = var.image_family
   disk_size        = 25
   disk_type        = "pd-ssd"
   credentials_file = var.account_file
@@ -88,7 +88,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "gcloud compute images add-iam-policy-binding ${var.image_name} --project=${var.gcp_project_id} --member='serviceAccount:${var.demo_project_id}@developer.gserviceaccount.com' --role='roles/compute.imageUser'"
+      "gcloud compute images add-iam-policy-binding family/${var.image_family} --project=${var.gcp_project_id} --member='serviceAccount:${var.demo_project_id}@developer.gserviceaccount.com' --role='roles/compute.imageUser'"
     ]
     only = ["googlecompute.ubuntu"]
   }
