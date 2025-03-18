@@ -90,7 +90,7 @@ build {
     inline = [
       "gcloud compute images add-iam-policy-binding ${var.image_name} --project=${var.gcp_project_id} --member='serviceAccount:${var.demo_project_id}@developer.gserviceaccount.com' --role='roles/compute.imageUser'"
     ]
-    only = ["googlecompute.ubuntu"]  # Ensure this runs only for GCP builds
+    only = ["googlecompute.ubuntu"]
   }
 
 }
