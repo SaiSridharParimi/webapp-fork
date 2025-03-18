@@ -43,7 +43,7 @@ variable "image_name" {
   default = "gcp-image"
 }
 
-variable "image_name" {
+variable "image_family" {
   type    = string
   default = "webapp"
 }
