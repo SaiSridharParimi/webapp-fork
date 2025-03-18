@@ -85,4 +85,12 @@ build {
       "CLOUD_PROVIDER={{if eq .Source \"source.googlecompute.ubuntu\"}}gcp{{else}}aws{{end}}"
     ]
   }
+
+  provisioner "shell" {
+    inline = [
+      "gcloud compute images add-iam-policy-binding ${var.image_name} --project=${var.gcp_project_id} --member='serviceAccount:${var.demo_project_id}@developer.gserviceaccount.com' --role='roles/compute.imageUser'"
+    ]
+    only = ["googlecompute.ubuntu"]
+  }
+
 }
