@@ -82,7 +82,7 @@ build {
   provisioner "shell" {
     script = "scripts/setup.sh"
     environment_vars = [
-      "CLOUD_PROVIDER=${build_source == "source.googlecompute.ubuntu" ? "gcp" : "aws"}"
+      "CLOUD_PROVIDER={{if eq .Source \"source.googlecompute.ubuntu\"}}gcp{{else}}aws{{end}}"
     ]
   }
 }
