@@ -42,7 +42,7 @@ source "googlecompute" "ubuntu" {
   machine_type     = "e2-micro"
   ssh_username     = var.username
   image_name       = var.image_name
-  image_family     = "webapp"
+  image_family     = var.image_family
   disk_size        = 25
   disk_type        = "pd-ssd"
   credentials_file = var.account_file
