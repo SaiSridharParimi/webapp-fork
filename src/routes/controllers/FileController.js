@@ -13,17 +13,19 @@ async function FileController(req, res){
     if(req.method==="POST"){
         upload.single("profilePic")(req, res, async function(err){
             if(err){
-                console.log("Hello")
-                console.log(err)
                 res.status(400).send()
+            }
+            if (!req.file) {
+                return res.status(400).send();
             }
             const file = req.file;
             console.log(file.originalname)
 
             const fileId = uuidv4();
+            const key = `${fileId}/${file.originalname}`
             const uploadParams = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: `${fileId}/${file.originalname}`,
+                Key: key,
                 Body: file.buffer,
                 ContentType: file.mimetype,
             }
@@ -32,13 +34,13 @@ async function FileController(req, res){
             const dbResult = await File.create({
                 file_name: file.originalname,
                 id: fileId,
-                url: uploadParams.Key,
+                url: `${process.env.BUCKET_NAME}/${key}`,
                 upload_date: uploadDate,
             })
             return res.status(201).json({
                 file_name: file.originalname,
                 id: dbResult.id,
-                url: uploadParams.Key,
+                url:`${process.env.BUCKET_NAME}/${key}`,
                 upload_date: uploadDate
             });
         })
@@ -52,6 +54,7 @@ async function FileController(req, res){
             res.status(400).send()
             return;
         }
+        
         const fileRecord = await File.findOne({ where: { id: id } });
         if(!fileRecord){
             res.status(404).send()
