@@ -61,7 +61,7 @@ jobs:
       - name: Packer Format
         working-directory: src/infra
         run: packer fmt -check .
-
+ 
       - name: Packer Validate
         working-directory: src/infra
         env:
