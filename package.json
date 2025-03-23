@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "aws-sdk": "^2.1692.0",
-    "winston": "^3.17.0"
-  }
-}
