@@ -79,6 +79,11 @@ build {
   #   only        = ["googlecompute.ubuntu"]
   # }
 
+  provisioner "file" {
+    source      = "cw-config.json"
+    destination = "/tmp/cw-config.json"
+  }
+
   provisioner "shell" {
     script = "scripts/setup.sh"
     # environment_vars = [

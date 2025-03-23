@@ -10,6 +10,9 @@ ExecStart=/usr/bin/node /opt/csye6225/src/index.js
 Restart=always
 RestartSec=10
 EnvironmentFile=/opt/csye6225/src/.env
+StandardOutput=append:/opt/webapp/logs/csye6225.log
+StandardError=append:/opt/webapp/logs/csye6225.log
+SyslogIdentifier=csye6225
 
 [Install]
 WantedBy=multi-user.target

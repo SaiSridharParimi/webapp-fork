@@ -2,6 +2,7 @@ const supertest = require("supertest")
 const { app, server } = require("../index")
 const { sequelize } = require("../config/database")
 const {execSync} = require("child_process")
+const statsd = require("../statsd")
 
 beforeAll(async() => {
     await sequelize.authenticate().then(async() => {
@@ -111,4 +112,5 @@ afterEach(async () => {
 afterAll(async()=>{
     await sequelize.close()
     server.close()
+    statsd.close()
 })
