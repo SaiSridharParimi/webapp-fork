@@ -49,7 +49,6 @@ async function FileController(req, res) {
                 ContentType: file.mimetype,
             };
 
-            // Timing S3 upload
             const uploadResult = await s3.upload(uploadParams).promise();
             const s3Duration = Date.now() - s3StartTime;
             statsd.timing("api.s3.upload.time", s3Duration);
@@ -63,7 +62,6 @@ async function FileController(req, res) {
                 upload_date: uploadDate,
             });
 
-            // Timing DB query
             const dbDuration = Date.now() - dbStartTime;
             statsd.timing("api.db.insert.time", dbDuration);
             logger.info(`File metadata saved to database with ID: ${dbResult.id}, Time taken: ${dbDuration}ms`);
