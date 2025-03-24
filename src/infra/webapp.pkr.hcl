@@ -86,6 +86,10 @@ build {
 
   provisioner "shell" {
     script = "scripts/setup.sh"
+    inline = [
+      "sudo chmod +x scripts/setup.sh",
+      "sudo scripts/setup.sh"
+    ]
     # environment_vars = [
     #   "CLOUD_PROVIDER={{if eq .Source \"source.googlecompute.ubuntu\"}}gcp{{else}}aws{{end}}"
     # ]
