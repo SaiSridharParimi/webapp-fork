@@ -60,9 +60,10 @@ echo "Installing Node.js dependencies..."
 sudo npm install
 sudo chown -R csye6225:csye6225 node_modules
 wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb
 
-sudo mkdir -p /opt/csye6225/logs
-sudo chown -R csye6225:csye6225 /opt/csye6225/logs
+sudo mkdir -p /opt/csye6225/logs/
+sudo chown -R csye6225:csye6225 /opt/csye6225/logs/
 sudo mv /tmp/cw-config.json /opt/cw-config.json
 sudo chown csye6225:csye6225 /opt/cw-config.json
 
@@ -70,5 +71,5 @@ sudo mv /tmp/webapp.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable webapp.service
 
-sudo apt remove --purge git -y
-sudo apt autoremove -y
+# sudo apt remove --purge git -y
+# sudo apt autoremove -y

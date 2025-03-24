@@ -1,28 +1,40 @@
 const winston = require('winston');
 const path = require('path');
+const fs = require('fs');
 
-const logFilePath = path.join(__dirname, 'logs', 'application.log');
+const logDir = path.join(__dirname, 'logs');
+
+
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+
+const logFormat = winston.format.printf(({ level, message, timestamp, httpRequest }) => {
+  return JSON.stringify({
+    timestamp,
+    severity: level.toUpperCase(),
+    message,
+    httpRequest
+  });
+});
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'debug',
   format: winston.format.combine(
     winston.format.timestamp(),
-    winston.format.json()
+    logFormat
   ),
   transports: [
-    new winston.transports.File({ filename: logFilePath }),
+    new winston.transports.File({ filename: path.join(logDir, 'csye6225.log') }),
     new winston.transports.Console()
+  ],
+  exceptionHandlers: [
+    new winston.transports.File({ filename: path.join(logDir, 'exceptions.log') })
   ]
 });
 
-// Handle uncaught exceptions
-logger.exceptions.handle(
-  new winston.transports.File({ filename: path.join(__dirname, 'logs', 'exceptions.log') })
-);
-
-// Handle unhandled promise rejections
 process.on('unhandledRejection', (reason) => {
-  logger.error(`Unhandled Rejection: ${reason}`);
+  logger.error(err)
 });
 
 module.exports = logger;
