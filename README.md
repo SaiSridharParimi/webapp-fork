@@ -4,7 +4,7 @@
 - Node.js
 - MySQL
 - DB and Port Details 
-- DigitalOcean
+- DigitalOcean 
 
 ## Instructions to run the application
 - Clone the repository from webapp repository
