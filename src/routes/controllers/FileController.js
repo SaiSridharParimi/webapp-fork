@@ -12,7 +12,7 @@ async function FileController(req, res) {
     logger.info(`Received request: ${req.method} ${req.url}`);
     statsd.increment(`api.${req.method.toLowerCase()}.requests`);
     
-    const apiDurationStart = Date.now();
+    const apiDurationStart = Date.now(); 
     
     if (req.method === "HEAD" || req.method === "OPTIONS" || req.method === "PUT" || req.method === "PATCH") {
         logger.warn(`Method ${req.method} not allowed on ${req.url}`);
