@@ -37,7 +37,7 @@ async function FileController(req, res) {
             }
             const file = req.file;
             const fileStartTime = Date.now();
-            console.log(file.originalname);
+            // console.log(file.originalname);
 
             const fileId = uuidv4();
             const key = `${fileId}/${file.originalname}`;
@@ -86,7 +86,7 @@ async function FileController(req, res) {
     else if (req.method === "GET") {
         const startTime = Date.now();
         const { id } = req.params;
-        console.log(id);
+        // console.log(id);
 
         if (!id) {
             logger.warn("File ID missing in GET request");

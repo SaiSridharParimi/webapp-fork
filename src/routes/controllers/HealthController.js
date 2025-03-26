@@ -10,7 +10,7 @@ async function HealthController(req,res){
         statsd.increment("api.healthz.requests");
         await sequelize.authenticate();
         // res.removeHeader("Connection");
-        console.log("Hi in Controller==============")
+        // console.log("Hi in Controller==============")
         // res.removeHeader("X-Powered-By");
         // res.set("Cache-Control", "no-cache, no-store, must-revalidate;");
         // res.set("Pragma", "no-cache");
