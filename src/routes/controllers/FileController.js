@@ -38,7 +38,6 @@ async function FileController(req, res) {
             const file = req.file;
             const fileStartTime = Date.now();
             // console.log(file.originalname);
-
             const fileId = uuidv4();
             const key = `${fileId}/${file.originalname}`;
             const s3StartTime = Date.now();
@@ -48,7 +47,6 @@ async function FileController(req, res) {
                 Body: file.buffer,
                 ContentType: file.mimetype,
             };
-
             const uploadResult = await s3.upload(uploadParams).promise();
             const s3Duration = Date.now() - s3StartTime;
             statsd.timing("api.s3.upload.time", s3Duration);
@@ -61,7 +59,6 @@ async function FileController(req, res) {
                 url: `${process.env.BUCKET_NAME}/${key}`,
                 upload_date: uploadDate,
             });
-
             const dbDuration = Date.now() - dbStartTime;
             statsd.timing("api.db.insert.time", dbDuration);
             logger.info(`File metadata saved to database with ID: ${dbResult.id}, Time taken: ${dbDuration}ms`);
@@ -73,7 +70,6 @@ async function FileController(req, res) {
             const apiTotalDuration = Date.now() - apiDurationStart;
             statsd.timing("api.upload.api.time", apiTotalDuration);
             logger.info(`Total API request time: ${apiTotalDuration}ms`);
-
             return res.status(201).json({
                 file_name: file.originalname,
                 id: dbResult.id,
@@ -135,7 +131,7 @@ async function FileController(req, res) {
         }
         const deleteParams = {
             Bucket: process.env.BUCKET_NAME,
-            Key: fileRecord.url,
+            Key: fileRecord.url.replace(`${process.env.BUCKET_NAME}/`, ""), 
         };
         logger.info(`Deleting file from S3: ${fileRecord.url}`);
         const deleteStartT = Date.now();
