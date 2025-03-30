@@ -23,7 +23,7 @@ function healthMiddleware(req, res, next){
 
     // console.log(req.headers);
 
-    const predefinedHeaders = ['user-agent', 'accept', 'postman-token', 'host', 'accept-encoding', 'connection', 'cookie'];
+    const predefinedHeaders = ['user-agent', 'accept', 'postman-token', 'host', 'accept-encoding', 'connection', 'cookie', , 'x-amzn-trace-id', 'x-forwarded-for'];
     
     for(let header in req.headers){
         if(!predefinedHeaders.includes(header.toLowerCase())){
