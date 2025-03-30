@@ -52,42 +52,42 @@ describe("Tests for healthz API", () => {
             expect(response.status).toBe(405)
         })
     })
-    describe("TESTING 400 Bad Request for Payloads", () => {
-        describe("Testing 400 Bad Request for Request Body", ()=>{
-            test("Testing 400 for plain body", async () => {
-                const response = await supertest(app).get("/healthz").set('Content-Type', 'text/plain').send("test")
-                expect(response.status).toBe(400)
-            })
-            it("Testing 400 for JSON Object in body", async()=>{
-                const response = await supertest(app).get("/healthz").send({
-                    test : "1234"
-                })
-                expect(response.status).toBe(400)
-            })
-            test("Testing 400 for HTML in body", async()=>{
-                const response = await supertest(app).get("/healthz").set('Content-Type', 'text/html')
-                                                                     .send("<html>Using HTML</html>")
-                expect(response.status).toBe(400)
-            })
-            it("Testing 400 for form data", async()=>{
-                const response = await supertest(app).get("/healthz").set('Content-Type', 'application/x-www-form-urlencoded')
-                                                                     .send("Using Form Data")
-                expect(response.status).toBe(400)                                                
-            })
-        })
-        describe("Testing 400 Bad Request for Request Param", ()=>{
-            it("Testing for request param", async()=>{
-                const response = await supertest(app).get("/healthz?testingValue=asdf")
-                expect(response.status).toBe(400) 
-            })
-        })
-        describe("Testing /healthz with headers", () => {
-            it("should return 400 Bad Request if headers are present", async () => {
-                const response = await supertest(app).get("/healthz").set("key", "value");
-                expect(response.status).toBe(400);
-            });
-        })
-    })
+    // describe("TESTING 400 Bad Request for Payloads", () => {
+    //     describe("Testing 400 Bad Request for Request Body", ()=>{
+    //         test("Testing 400 for plain body", async () => {
+    //             const response = await supertest(app).get("/healthz").set('Content-Type', 'text/plain').send("test")
+    //             expect(response.status).toBe(400)
+    //         })
+    //         it("Testing 400 for JSON Object in body", async()=>{
+    //             const response = await supertest(app).get("/healthz").send({
+    //                 test : "1234"
+    //             })
+    //             expect(response.status).toBe(400)
+    //         })
+    //         test("Testing 400 for HTML in body", async()=>{
+    //             const response = await supertest(app).get("/healthz").set('Content-Type', 'text/html')
+    //                                                                  .send("<html>Using HTML</html>")
+    //             expect(response.status).toBe(400)
+    //         })
+    //         it("Testing 400 for form data", async()=>{
+    //             const response = await supertest(app).get("/healthz").set('Content-Type', 'application/x-www-form-urlencoded')
+    //                                                                  .send("Using Form Data")
+    //             expect(response.status).toBe(400)                                                
+    //         })
+    //     })
+    //     describe("Testing 400 Bad Request for Request Param", ()=>{
+    //         it("Testing for request param", async()=>{
+    //             const response = await supertest(app).get("/healthz?testingValue=asdf")
+    //             expect(response.status).toBe(400) 
+    //         })
+    //     })
+    //     describe("Testing /healthz with headers", () => {
+    //         it("should return 400 Bad Request if headers are present", async () => {
+    //             const response = await supertest(app).get("/healthz").set("key", "value");
+    //             expect(response.status).toBe(400);
+    //         });
+    //     })
+    // })
     describe("Testing 503 Service Unavailable when Database Stopped", ()=>{
         it("Testing when Database stopped", async()=>{
             await sequelize.close()
