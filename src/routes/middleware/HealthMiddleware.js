@@ -7,19 +7,19 @@ function healthMiddleware(req, res, next){
         res.status(405).send();
         return;
     }
-    // if(Object.keys(req.body).length>0 || typeof(req.body)==JSON){
-    //     res.status(400).send();
-    //     return;
-    // }
+    if(Object.keys(req.body).length>0 || typeof(req.body)==JSON){
+        res.status(400).send();
+        return;
+    }
 
     // req.on("data", ()=>{
     //     res.status(400).send();
     //     return;
     // })
 
-    // if(Object.keys(req.query).length>0){
-    //     res.status(400).send();
-    // }
+    if(Object.keys(req.query).length>0){
+        res.status(400).send();
+    }
 
     // console.log(req.headers);
 
