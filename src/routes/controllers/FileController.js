@@ -29,7 +29,7 @@ async function FileController(req, res) {
                 statsd.increment("api.upload.errors");
                 res.status(400).send();
                 return;
-            }
+            } 
             if (!req.file) {
                 logger.warn("File not provided in request");
                 statsd.increment("api.upload.missing_file");
