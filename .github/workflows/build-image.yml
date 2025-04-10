@@ -20,12 +20,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
 
-      - name: Configure AWS Credentials (DEMO)
-        uses: aws-actions/configure-aws-credentials@v2
-        with: 
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
-          aws-region: ${{ secrets.REGION }}
+      # - name: Configure AWS Credentials (DEMO)
+      #   uses: aws-actions/configure-aws-credentials@v2
+      #   with: 
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+      #     aws-region: ${{ secrets.REGION }}
 
       - name: Configure GCP Credentials
         uses: google-github-actions/auth@v1
@@ -81,3 +81,49 @@ jobs:
           DEMO_PROJECT_ID: ${{ secrets.DEMO_PROJECT_ID }}
           DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
         run: packer build .
+
+      - name: Set Deployment Environment Variable
+        run: echo "DEPLOY_ENV=${{ secrets.DEPLOY_ENV }}" >> $GITHUB_ENV
+
+      - name: Switch to DEMO AWS Credentials (if needed)
+        if: env.DEPLOY_ENV == 'DEMO'
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Update Launch Template with new AMI
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' src/infra/manifest.json | cut -d ":" -f2)
+          aws ec2 create-launch-template-version \
+            --launch-template-name ${{ secrets.LAUNCH_TEMPLATE_NAME }} \
+            --source-version 1 \
+            --version-description "Updated AMI" \
+            --launch-template-data "{\"ImageId\":\"$AMI_ID\"}"
+
+      - name: Start Instance Refresh
+        id: refresh
+        run: |
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+            --strategy Rolling \
+            --query 'InstanceRefreshId' \
+            --output text)
+          echo "REFRESH_ID=$REFRESH_ID" >> $GITHUB_ENV
+
+      - name: Wait for Instance Refresh to Complete
+        run: |
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+              --query "InstanceRefreshes[?InstanceRefreshId=='$REFRESH_ID'].Status" \
+              --output text)
+            echo "Current Refresh Status: $STATUS"
+            if [ "$STATUS" == "Successful" ]; then
+              exit 0
+            elif [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "Failed" ]; then
+              exit 1
+            fi
+            sleep 30
+          done
