@@ -12,7 +12,7 @@ packer {
 }
 
 source "amazon-ebs" "ubuntu" {
-  ami_name      = "aws-packer-${clean_resource_name(timestamp())}"
+  ami_name      = "aws-packer-${uuid()}"
   instance_type = "t2.micro"
   region        = var.region
   profile       = var.profile
