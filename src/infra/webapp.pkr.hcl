@@ -12,7 +12,7 @@ packer {
 }
 
 source "amazon-ebs" "ubuntu" {
-  ami_name      = "aws-packer-1"
+  ami_name      = "aws-packer-${uuidv4()}"
   instance_type = "t2.micro"
   region        = var.region
   profile       = var.profile
