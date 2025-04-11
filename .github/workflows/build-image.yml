@@ -84,6 +84,7 @@ jobs:
         id: share_ami
         run: |
           AMI_ID=$(aws ec2 describe-images \
+              --region ${{ secrets.AWS_REGION }} \
               --owners self \
               --filters "Name=state,Values=available" \
               --query "Images | sort_by(@, &CreationDate)[-1].ImageId" \
