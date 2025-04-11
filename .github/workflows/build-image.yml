@@ -113,7 +113,7 @@ jobs:
           --source-version 1 \
           --version-description "Updated AMI" \
           --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID }}\"}" \
-          --region ${{ secrets.AWS_REGION }} \
+          --region ${{ secrets.REGION }} \
           --no-cli-pager
 
 
