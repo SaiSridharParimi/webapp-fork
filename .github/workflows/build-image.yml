@@ -1,52 +1,45 @@
-name: Building Machine Image
+name: Build and Deploy Machine Image
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  build:
-    name: Building MI for AWS & GCP
+  packer-build:
+    name: Build AMI and Share to Demo
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials (DEV)
+      - name: Configure AWS (DEV)
         uses: aws-actions/configure-aws-credentials@v2
         with: 
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
 
-      # - name: Configure AWS Credentials (DEMO)
-      #   uses: aws-actions/configure-aws-credentials@v2
-      #   with: 
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
-      #     aws-region: ${{ secrets.REGION }}
-
-      - name: Configure GCP Credentials
+      - name: Configure GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - name: Setting GCP SDK
+      - name: Setup GCP SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Setting GCP Access Key
+      - name: Write GCP Key File
         working-directory: src/infra
-        run: |
-          echo '${{ secrets.GCP_CREDENTIALS }}' >> .gcp-key.json
+        run: echo '${{ secrets.GCP_CREDENTIALS }}' >> .gcp-key.json
 
-      - name: Install Packer 
+      - name: Install Packer
         uses: hashicorp/setup-packer@main
 
-      - name: Building Artifact
+      - name: Zip Artifact
         run: zip -r webapp.zip ./* -x "*.git*"
 
-      - name: Setting .env
+      - name: Set .env for Scripts
         working-directory: src/infra/scripts
         run: |
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
@@ -56,9 +49,8 @@ jobs:
           echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
           echo "DIALECT=${{ secrets.DIALECT }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
-          cat .env
 
-      - name: Setting .env
+      - name: Set .env for App
         working-directory: src
         run: |
           echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
@@ -68,13 +60,12 @@ jobs:
           echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
           echo "DIALECT=${{ secrets.DIALECT }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
-          cat .env
 
-      - name: Packer Initialization
+      - name: Packer Init
         working-directory: src/infra
         run: packer init .
 
-      - name: Building Image
+      - name: Build AMI
         working-directory: src/infra
         env:
           AMI_USER: ${{ secrets.AMI_USER }}
@@ -82,40 +73,59 @@ jobs:
           DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
         run: |
           BUILD_OUTPUT=$(packer build .)
-
-          # Extract AMI ID from final summary line
           AMI_ID=$(echo "$BUILD_OUTPUT" | grep -Eo 'ami-[a-zA-Z0-9]+' | tail -n1)
-
           if [ -z "$AMI_ID" ]; then
-            echo "Error: AMI ID not found"
+            echo "AMI ID not found"
             exit 1
           fi
-
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
           echo "$AMI_ID" > ami_id.txt
-          echo "Successfully built AMI with ID: $AMI_ID"
 
-      - name: Set Deployment Environment Variable
-        run: echo "DEPLOY_ENV=${{ secrets.DEPLOY_ENV }}" >> $GITHUB_ENV
+      - name: Share AMI with Demo Account
+        run: |
+          aws ec2 modify-image-attribute \
+            --image-id ${{ env.AMI_ID }} \
+            --launch-permission "Add=[{UserId=${{ secrets.DEMO_USER }}]]"
 
-      - name: Switch to DEMO AWS Credentials (if needed)
-        if: env.DEPLOY_ENV == 'DEMO'
+      - name: Upload AMI ID
+        uses: actions/upload-artifact@v4
+        with:
+          name: ami_id
+          path: ami_id.txt
+
+  autoscaling-refresh:
+    name: ASG Launch Template & Instance Refresh
+    runs-on: ubuntu-latest
+    needs: packer-build
+
+    steps:
+      - name: Download AMI ID
+        uses: actions/download-artifact@v4
+        with:
+          name: ami_id
+
+      - name: Read AMI ID
+        id: read_ami
+        run: |
+          AMI_ID=$(cat ami_id.txt)
+          echo "ami_id=$AMI_ID" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+          aws-access-key-id: ${{ secrets.DEPLOY_ENV == 'DEMO' && secrets.AWS_ACCESS_KEY_DEMO || secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.DEPLOY_ENV == 'DEMO' && secrets.AWS_SECRET_ACCESS_KEY_DEMO || secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
 
-      - name: Update Launch Template with new AMI
+      - name: Create New Launch Template Version
         run: |
           aws ec2 create-launch-template-version \
-          --launch-template-name ${{ secrets.LAUNCH_TEMPLATE_NAME }} \
-          --source-version 1 \
-          --version-description "Updated AMI" \
-          --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID }}\"}" \
-          --region ${{ secrets.REGION }} \
-          --no-cli-pager
-
+            --launch-template-name ${{ secrets.LAUNCH_TEMPLATE_NAME }} \
+            --source-version 1 \
+            --version-description "Updated AMI" \
+            --launch-template-data "{\"ImageId\":\"${{ env.ami_id }}\"}" \
+            --region ${{ secrets.REGION }} \
+            --no-cli-pager
 
       - name: Start Instance Refresh
         id: refresh
@@ -133,12 +143,14 @@ jobs:
           while true; do
             STATUS=$(aws autoscaling describe-instance-refreshes \
               --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
-              --query "InstanceRefreshes[?InstanceRefreshId=='$REFRESH_ID'].Status" \
+              --query "InstanceRefreshes[?InstanceRefreshId=='${{ env.REFRESH_ID }}'].Status" \
               --output text)
-            echo "Current Refresh Status: $STATUS"
+            echo "Refresh Status: $STATUS"
             if [ "$STATUS" == "Successful" ]; then
-              exit 0
+              echo "Instance refresh completed."
+              break
             elif [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "Failed" ]; then
+              echo "Instance refresh failed or cancelled."
               exit 1
             fi
             sleep 30
