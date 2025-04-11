@@ -77,11 +77,28 @@ jobs:
 
       - name: Share AMI with DEMO account
         run: |
-          AMI_ID=$(aws ec2 describe-images --owners self --query 'Images[*].[ImageId]' --output text --filters "Name=name,Values=webapp-*")
+          # Get the most recent AMI ID
+          AMI_ID=$(aws ec2 describe-images \
+            --owners self \
+            --query 'sort_by(Images, &CreationDate)[-1].ImageId' \
+            --output text \
+            --filters "Name=name,Values=webapp-*")
+          
+          # Verify we got an AMI ID
+          if [ -z "$AMI_ID" ]; then
+            echo "ERROR: No AMI found matching name 'webapp-*'"
+            aws ec2 describe-images --owners self --query 'Images[*].[Name,ImageId,CreationDate]' --output text
+            exit 1
+          fi
+          
+          echo "Found AMI ID: $AMI_ID"
+          
+          # Share the AMI
           aws ec2 modify-image-attribute \
-            --image-id $AMI_ID \
+            --image-id "$AMI_ID" \
             --launch-permission "Add=[{UserId=${{ secrets.DEMO_AWS_ACCOUNT_ID }}}]"
-          echo "Shared AMI $AMI_ID with DEMO account ${{ secrets.DEMO_AWS_ACCOUNT_ID }}"
+          
+          echo "Successfully shared AMI $AMI_ID with DEMO account ${{ secrets.DEMO_AWS_ACCOUNT_ID }}"
 
       - name: Configure DEMO AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
