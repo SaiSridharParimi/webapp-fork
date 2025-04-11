@@ -109,11 +109,12 @@ jobs:
       - name: Update Launch Template with new AMI
         run: |
           aws ec2 create-launch-template-version \
-            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_NAME }} \
+            --launch-template-name ${{ secrets.LAUNCH_TEMPLATE_NAME }} \
             --source-version 1 \
             --version-description "Updated AMI" \
             --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID }}\"}" \
             --no-cli-pager
+
 
       - name: Start Instance Refresh
         id: refresh
