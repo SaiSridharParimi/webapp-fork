@@ -81,13 +81,18 @@ jobs:
           DEMO_PROJECT_ID: ${{ secrets.DEMO_PROJECT_ID }}
           DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
         run: |
-          BUILD_OUTPUT=$(packer build -machine-readable .)
-          AMI_ID=$(echo "$BUILD_OUTPUT" | grep 'artifact,0,id' | cut -d ',' -f 2)
+          BUILD_OUTPUT=$(packer build .)
+
+          # Extract AMI ID from final summary line
+          AMI_ID=$(echo "$BUILD_OUTPUT" | grep -Eo 'ami-[a-zA-Z0-9]+' | tail -n1)
+
           if [ -z "$AMI_ID" ]; then
-            echo "Error: AMI ID not found in packer build output"
+            echo "Error: AMI ID not found"
             exit 1
           fi
+
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+          echo "$AMI_ID" > ami_id.txt
           echo "Successfully built AMI with ID: $AMI_ID"
 
       - name: Set Deployment Environment Variable
