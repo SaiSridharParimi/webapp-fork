@@ -80,7 +80,9 @@ jobs:
           AMI_USER: ${{ secrets.AMI_USER }}
           DEMO_PROJECT_ID: ${{ secrets.DEMO_PROJECT_ID }}
           DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
-        run: packer build .
+        run: |
+          AMI_ID=$(packer build -machine-readable webapp.pkr.hcl | grep 'artifact,0,id' | cut -d ',' -f 2)
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
 
       - name: Set Deployment Environment Variable
         run: echo "DEPLOY_ENV=${{ secrets.DEPLOY_ENV }}" >> $GITHUB_ENV
@@ -95,12 +97,11 @@ jobs:
 
       - name: Update Launch Template with new AMI
         run: |
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' src/infra/manifest.json | cut -d ":" -f2)
           aws ec2 create-launch-template-version \
             --launch-template-name ${{ secrets.LAUNCH_TEMPLATE_NAME }} \
             --source-version 1 \
             --version-description "Updated AMI" \
-            --launch-template-data "{\"ImageId\":\"$AMI_ID\"}"
+            --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID }}\"}"
 
       - name: Start Instance Refresh
         id: refresh
