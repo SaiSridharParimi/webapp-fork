@@ -80,6 +80,7 @@ jobs:
           # Get the newest available AMI
           AMI_ID=$(aws ec2 describe-images \
             --owners self \
+            --region ${{ secrets.REGION }} \
             --filters "Name=state,Values=available" \
             --query "Images | sort_by(@, &CreationDate)[-1].ImageId" \
             --output text)
