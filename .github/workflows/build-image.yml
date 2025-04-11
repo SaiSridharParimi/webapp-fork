@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
+      - name: Configure DEV AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with: 
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
@@ -75,86 +75,59 @@ jobs:
           DEV_PROJECT_ID: ${{ secrets.DEV_PROJECT_ID }}
         run: packer build .
 
-  deploy:
-    name: Deploy and Update AWS Infrastructure
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Share the AMI and Save AMI_ID
-        id: share_ami
+      - name: Share AMI with DEMO account
         run: |
-          AMI_ID=$(aws ec2 describe-images \
-              --owners self \
-              --filters "Name=state,Values=available" \
-              --query "Images | sort_by(@, &CreationDate)[-1].ImageId" \
-              --output text)
+          AMI_ID=$(aws ec2 describe-images --owners self --query 'Images[*].[ImageId]' --output text --filters "Name=name,Values=webapp-*")
+          aws ec2 modify-image-attribute \
+            --image-id $AMI_ID \
+            --launch-permission "Add=[{UserId=${{ secrets.DEMO_AWS_ACCOUNT_ID }}}]"
+          echo "Shared AMI $AMI_ID with DEMO account ${{ secrets.DEMO_AWS_ACCOUNT_ID }}"
 
-          if [ -n "$AMI_ID" ]; then
-            echo "Sharing AMI $AMI_ID with DEMO account..."
-            aws ec2 modify-image-attribute --image-id "$AMI_ID" \
-              --launch-permission "{\"Add\": [{\"UserId\": \"216989139487\"}]}"
-            echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
-            echo "$AMI_ID" > ami_id.txt
-          else
-            echo "AMI not found, exiting."
-            exit 1
-          fi
+      - name: Configure DEMO AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+          aws-region: ${{ secrets.REGION }}
 
-      - name: Upload AMI_ID Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ami_id
-          path: ami_id.txt
-
-      - name: Download AMI_ID Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ami_id
-
-      - name: Read AMI_ID
-        id: read_ami_id
+      - name: Create new Launch Template version
         run: |
-          AMI_ID=$(cat ami_id.txt)
-          echo "AMI_ID: $AMI_ID"
-          echo "ami_id=$AMI_ID" >> $GITHUB_ENV
-
-      - name: Create New Launch Template Version
-        id: create_lt_version
-        run: |
-          echo "Creating new Launch Template version with AMI ID: ${{ env.ami_id }}"
+          AMI_ID=$(aws ec2 describe-images --owners ${{ secrets.DEMO_AWS_ACCOUNT_ID }} --query 'Images[*].[ImageId]' --output text --filters "Name=name,Values=webapp-*")
           aws ec2 create-launch-template-version \
-              --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
-              --source-version 1 \
-              --launch-template-data "{\"ImageId\":\"${{ env.ami_id }}\"}" \
-              --no-cli-pager
+            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
+            --source-version '$Latest' \
+            --launch-template-data "ImageId=$AMI_ID"
+          echo "Created new Launch Template version with AMI $AMI_ID"
 
-      - name: Start Instance Refresh
-        id: start_refresh
+      - name: Start instance refresh
+        id: start-refresh
         run: |
           REFRESH_ID=$(aws autoscaling start-instance-refresh \
-              --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
-              --query "InstanceRefreshId" \
-              --output text \
-              --no-cli-pager)
-          echo "Instance Refresh started with ID: $REFRESH_ID"
-          echo "instance_refresh_id=$REFRESH_ID" >> $GITHUB_ENV
+            --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+            --preferences '{"InstanceWarmup": 300, "MinHealthyPercentage": 90}' \
+            --query 'InstanceRefreshId' \
+            --output text)
+          echo "refresh_id=$REFRESH_ID" >> $GITHUB_OUTPUT
+          echo "Started instance refresh with ID: $REFRESH_ID"
 
-      - name: Wait for Instance Refresh Completion
+      - name: Wait for instance refresh
         run: |
-          echo "Waiting for instance refresh to complete..."
           while true; do
             STATUS=$(aws autoscaling describe-instance-refreshes \
-                --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
-                --query "InstanceRefreshes[?InstanceRefreshId=='${{ env.instance_refresh_id }}'].Status" \
-                --output text \
-                --no-cli-pager)
+              --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+              --instance-refresh-ids "${{ steps.start-refresh.outputs.refresh_id }}" \
+              --query 'InstanceRefreshes[0].Status' \
+              --output text)
+            
             echo "Current status: $STATUS"
+            
             if [[ "$STATUS" == "Successful" ]]; then
-              echo "Instance Refresh completed successfully."
-              break
+              echo "Instance refresh completed successfully"
+              exit 0
             elif [[ "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
-              echo "Instance Refresh failed or was cancelled. Exiting."
+              echo "Instance refresh failed or was cancelled"
               exit 1
             fi
+            
             sleep 30
           done
