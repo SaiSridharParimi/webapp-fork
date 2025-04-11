@@ -120,6 +120,8 @@ jobs:
           aws-region: ${{ secrets.REGION }}
 
       - name: Create new Launch Template version
+        env:
+          AWS_REGION: us-west-2
         run: |
           OWNER=$([ "${{ secrets.DEPLOY_ENV }}" == "DEV" ] && echo "self" || echo "${{ secrets.DEMO_AWS_ACCOUNT_ID }}")
           AMI_ID=$(aws ec2 describe-images \
@@ -136,6 +138,8 @@ jobs:
           echo "Created new Launch Template version with AMI $AMI_ID"
 
       - name: Start instance refresh
+        env:
+          AWS_REGION: us-west-2
         id: start-refresh
         run: |
           REFRESH_ID=$(aws autoscaling start-instance-refresh \
@@ -147,6 +151,8 @@ jobs:
           echo "Started instance refresh with ID: $REFRESH_ID"
 
       - name: Wait for instance refresh
+        env:
+          AWS_REGION: us-west-2
         run: |
           while true; do
             STATUS=$(aws autoscaling describe-instance-refreshes \
