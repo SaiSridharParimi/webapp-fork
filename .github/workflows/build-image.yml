@@ -77,17 +77,18 @@ jobs:
 
       - name: Share AMI with DEMO account
         run: |
-          # Get the most recent AMI ID
+          # Get the newest available AMI
           AMI_ID=$(aws ec2 describe-images \
             --owners self \
-            --query 'sort_by(Images, &CreationDate)[-1].ImageId' \
-            --output text \
-            --filters "Name=name,Values=webapp-*")
+            --filters "Name=state,Values=available" \
+            --query "Images | sort_by(@, &CreationDate)[-1].ImageId" \
+            --output text)
           
           # Verify we got an AMI ID
           if [ -z "$AMI_ID" ]; then
-            echo "ERROR: No AMI found matching name 'webapp-*'"
-            aws ec2 describe-images --owners self --query 'Images[*].[Name,ImageId,CreationDate]' --output text
+            echo "ERROR: No available AMIs found in this account/region"
+            echo "Debug info - all available AMIs:"
+            aws ec2 describe-images --owners self --filters "Name=state,Values=available" --query 'Images[*].[Name,ImageId,CreationDate]' --output table
             exit 1
           fi
           
