@@ -76,38 +76,47 @@ jobs:
         run: packer build .
 
       - name: Share AMI with DEMO account
+        env:
+          AWS_REGION: us-west-2
         run: |
-          # Get the newest available AMI
-          AMI_ID=$(aws ec2 describe-images \
-            --owners self \
-            --region ${{ secrets.REGION }} \
-            --filters "Name=state,Values=available" \
-            --query "Images | sort_by(@, &CreationDate)[-1].ImageId" \
-            --output text)
-          
-          # Verify we got an AMI ID
-          if [ -z "$AMI_ID" ]; then
-            echo "ERROR: No available AMIs found in this account/region"
-            echo "Debug info - all available AMIs:"
-            aws ec2 describe-images --owners self --filters "Name=state,Values=available" --query 'Images[*].[Name,ImageId,CreationDate]' --output table
+          # Wait for AMI to become available (max 5 minutes)
+          echo "Waiting for AMI to become available..."
+          end_time=$((SECONDS+300))
+          while [ $SECONDS -lt $end_time ]; do
+            AMI_ID=$(aws ec2 describe-images \
+              --owners self \
+              --filters "Name=name,Values=aws-packer-*" "Name=state,Values=available" \
+              --query "sort_by(Images, &CreationDate)[-1].ImageId" \
+              --output text)
+            
+            if [[ -n "$AMI_ID" && "$AMI_ID" != "None" ]]; then
+              break
+            fi
+            sleep 10
+          done
+
+          if [[ -z "$AMI_ID" || "$AMI_ID" == "None" ]]; then
+            echo "::error::No available AMIs found after waiting"
+            echo "::group::All AMIs in us-west-2"
+            aws ec2 describe-images --owners self --query 'Images[*].[ImageId,Name,State,CreationDate]' --output table
+            echo "::endgroup::"
             exit 1
           fi
+
+          echo "::notice::Found AMI: $AMI_ID"
           
-          echo "Found AMI ID: $AMI_ID"
-          
-          # Share the AMI
+          # Share AMI
           aws ec2 modify-image-attribute \
             --image-id "$AMI_ID" \
             --launch-permission "Add=[{UserId=${{ secrets.DEMO_AWS_ACCOUNT_ID }}}]"
           
-          echo "Successfully shared AMI $AMI_ID with DEMO account ${{ secrets.DEMO_AWS_ACCOUNT_ID }}"
-
-      - name: Configure DEMO AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with: 
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
-          aws-region: ${{ secrets.REGION }}
+          echo "::notice::Shared AMI with DEMO account"
+            - name: Configure DEMO AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v2
+              with: 
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_DEMO }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+                aws-region: ${{ secrets.REGION }}
 
       - name: Create new Launch Template version
         run: |
