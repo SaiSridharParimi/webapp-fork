@@ -76,6 +76,7 @@ jobs:
         run: packer build .
 
       - name: Share AMI with DEMO account
+        id: share-ami
         env:
           AWS_REGION: us-west-2
         run: |
@@ -111,6 +112,7 @@ jobs:
             --launch-permission "Add=[{UserId=${{ secrets.DEMO_AWS_ACCOUNT_ID }}}]"
           
           echo "::notice::Shared AMI with DEMO account"
+          echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
 
       - name: Configure Deployment AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -123,13 +125,8 @@ jobs:
         env:
           AWS_REGION: us-west-2
         run: |
-          echo "$AMI_ID"
+          AMI_ID="${{ steps.share-ami.outputs.ami_id }}"
           OWNER=$([ "${{ secrets.DEPLOY_ENV }}" == "DEV" ] && echo "self" || echo "${{ secrets.DEMO_AWS_ACCOUNT_ID }}")
-          # AMI_ID=$(aws ec2 describe-images \
-          #   --owners $OWNER \
-          #   --query 'sort_by(Images, &CreationDate)[-1].ImageId' \
-          #   --output text \
-          #   --filters "Name=name,Values=aws-packer-*" "Name=state,Values=available") 
           
           aws ec2 create-launch-template-version \
             --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
