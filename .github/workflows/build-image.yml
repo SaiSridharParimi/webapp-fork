@@ -128,12 +128,14 @@ jobs:
             --owners $OWNER \
             --query 'sort_by(Images, &CreationDate)[-1].ImageId' \
             --output text \
-            --filters "Name=name,Values=aws-packer-*" "Name=state,Values=available")
+            --filters "Name=name,Values=aws-packer-*" "Name=state,Values=available"
+            --region us-west-2)
           
           aws ec2 create-launch-template-version \
             --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
             --source-version '$Latest' \
             --launch-template-data "ImageId=$AMI_ID"
+            --region us-west-2
           
           echo "Created new Launch Template version with AMI $AMI_ID"
 
