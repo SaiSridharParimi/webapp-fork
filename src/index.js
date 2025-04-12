@@ -17,13 +17,8 @@ sequelize.authenticate().then(()=>{
 })
 
 app.use("/healthz", HealthRouter)
+app.use("/cicd", HealthRouter)
 app.use("/v1/file", FileRouter)
-
-app.get("/test", async(req, res)=>{
-    res.status(200).json({
-        message: "From test"
-    })
-})
 
 app.use("*", (_, res) => {
     res.status(400).send();
