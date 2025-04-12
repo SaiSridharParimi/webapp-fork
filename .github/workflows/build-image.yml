@@ -123,12 +123,13 @@ jobs:
         env:
           AWS_REGION: us-west-2
         run: |
+          echo "$AMI_ID"
           OWNER=$([ "${{ secrets.DEPLOY_ENV }}" == "DEV" ] && echo "self" || echo "${{ secrets.DEMO_AWS_ACCOUNT_ID }}")
-          AMI_ID=$(aws ec2 describe-images \
-            --owners $OWNER \
-            --query 'sort_by(Images, &CreationDate)[-1].ImageId' \
-            --output text \
-            --filters "Name=name,Values=aws-packer-*" "Name=state,Values=available") 
+          # AMI_ID=$(aws ec2 describe-images \
+          #   --owners $OWNER \
+          #   --query 'sort_by(Images, &CreationDate)[-1].ImageId' \
+          #   --output text \
+          #   --filters "Name=name,Values=aws-packer-*" "Name=state,Values=available") 
           
           aws ec2 create-launch-template-version \
             --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
